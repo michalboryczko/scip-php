@@ -37,6 +37,7 @@ use function preg_replace;
 use function realpath;
 use function rtrim;
 use function str_contains;
+use function str_ends_with;
 use function str_replace;
 use function str_starts_with;
 use function trait_exists;
@@ -72,6 +73,12 @@ final class Composer
     private readonly array $userConsts;
 
     /**
+     * Configuration for treating external packages as internal.
+     * @var array{packages: list<string>, classes: list<string>, methods: list<string>}
+     */
+    private readonly array $internalConfig;
+
+    /**
      * @param  non-empty-string  $elem
      * @param  non-empty-string  $elems
      * @return non-empty-string
@@ -88,7 +95,7 @@ final class Composer
         $autoload = is_array($json['autoload'] ?? null) ? $json['autoload'] : [];
         $autoloadDev = is_array($json['autoload-dev'] ?? null) ? $json['autoload-dev'] : [];
 
-        $scipPhpVendorDir = self::join(__DIR__, '..', '..', 'vendor');
+        $scipPhpVendorDir = $this->projectRoot . '/vendor';
         if (realpath($scipPhpVendorDir) === false) {
             throw new RuntimeException("Invalid scip-php vendor directory: {$scipPhpVendorDir}.");
         }
@@ -184,6 +191,42 @@ final class Composer
         $this->loader->addClassMap($additionalClasses);
 
         $this->userConsts = get_defined_constants(categorize: true)['user'] ?? []; // @phpstan-ignore-line
+
+        // Load scip-php.json config for treating external packages as internal
+        $this->internalConfig = $this->loadInternalConfig();
+    }
+
+    /**
+     * Load the scip-php.json configuration file.
+     * @return array{packages: list<string>, classes: list<string>, methods: list<string>}
+     */
+    private function loadInternalConfig(): array
+    {
+        $default = ['packages' => [], 'classes' => [], 'methods' => []];
+        $configFile = self::join($this->projectRoot, 'scip-php.json');
+
+        if (!is_file($configFile)) {
+            return $default;
+        }
+
+        $content = Reader::read($configFile);
+        $config = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+
+        if (!is_array($config)) {
+            return $default;
+        }
+
+        return [
+            'packages' => is_array($config['internal_packages'] ?? null)
+                ? array_values(array_filter($config['internal_packages'], 'is_string'))
+                : [],
+            'classes' => is_array($config['internal_classes'] ?? null)
+                ? array_values(array_filter($config['internal_classes'], 'is_string'))
+                : [],
+            'methods' => is_array($config['internal_methods'] ?? null)
+                ? array_values(array_filter($config['internal_methods'], 'is_string'))
+                : [],
+        ];
     }
 
     /**
@@ -276,7 +319,47 @@ final class Composer
     /** @param  non-empty-string  $ident */
     public function isDependency(string $ident): bool
     {
+        // Check if the identifier is configured as internal
+        if ($this->isConfiguredAsInternal($ident)) {
+            return false;
+        }
         return !$this->isFromProject($ident);
+    }
+
+    /**
+     * Check if an identifier is configured to be treated as internal.
+     * @param  non-empty-string  $ident
+     */
+    private function isConfiguredAsInternal(string $ident): bool
+    {
+        // Check against configured methods (e.g., "App\\Service\\MyClass::myMethod")
+        foreach ($this->internalConfig['methods'] as $method) {
+            if ($ident === $method || str_ends_with($ident, '\\' . $method)) {
+                return true;
+            }
+        }
+
+        // Check against configured classes (e.g., "App\\Service\\MyClass")
+        foreach ($this->internalConfig['classes'] as $class) {
+            // Match exact class or any member of the class
+            if ($ident === $class || str_starts_with($ident, $class . '::') || str_starts_with($ident, $class . '\\')) {
+                return true;
+            }
+        }
+
+        // Check against configured packages (e.g., "vendor/package")
+        $f = $this->findFile($ident);
+        if ($f !== null) {
+            foreach ($this->internalConfig['packages'] as $pkg) {
+                // Package names in vendor directories
+                $pkgPath = DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $pkg) . DIRECTORY_SEPARATOR;
+                if (str_contains($f, $pkgPath)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /** @param  non-empty-string  $c */

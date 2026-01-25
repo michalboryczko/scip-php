@@ -6,8 +6,11 @@ namespace ScipPhp\Types;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Clone_;
 use PhpParser\Node\Expr\FuncCall;
@@ -44,6 +47,7 @@ use ScipPhp\Types\Internal\IterableType;
 use ScipPhp\Types\Internal\NamedType;
 use ScipPhp\Types\Internal\Type;
 use ScipPhp\Types\Internal\TypeParser;
+use ScipPhp\Types\Internal\UniformIterableType;
 
 use function array_key_exists;
 use function in_array;
@@ -67,6 +71,12 @@ final class Types
 
     /** @var array<non-empty-string, true> */
     private array $seenDepFiles;
+
+    /** @var array<string, array<string, Type>> scope -> varName -> Type */
+    private array $localVars = [];
+
+    /** Current scope (method/function symbol) for local variable tracking */
+    private ?string $currentScope = null;
 
     public function __construct(
         private readonly Composer $composer,
@@ -144,6 +154,98 @@ final class Types
         );
     }
 
+    /**
+     * Find parent method symbols that the given method overrides.
+     * Used for generating SCIP relationships with is_reference flag.
+     *
+     * @param  non-empty-string  $classSymbol  The class containing the method
+     * @param  non-empty-string  $methodName   The method name
+     * @return list<non-empty-string>          Parent method symbols that are overridden
+     */
+    public function getParentMethodSymbols(string $classSymbol, string $methodName): array
+    {
+        $parentMethods = [];
+        $uppers = $this->uppers[$classSymbol] ?? [];
+
+        foreach ($uppers as $parentSymbol) {
+            // Check if parent has this method
+            $parentMethodSymbol = $this->namer->nameMeth($parentSymbol, $methodName);
+            if (array_key_exists($parentMethodSymbol, $this->defs)) {
+                $parentMethods[] = $parentMethodSymbol;
+            }
+
+            // Recursively check grandparents
+            $grandParentMethods = $this->getParentMethodSymbols($parentSymbol, $methodName);
+            foreach ($grandParentMethods as $gpMethod) {
+                if (!in_array($gpMethod, $parentMethods, true)) {
+                    $parentMethods[] = $gpMethod;
+                }
+            }
+        }
+
+        return $parentMethods;
+    }
+
+    /**
+     * Get the element type for a foreach loop variable.
+     *
+     * @param  Expr  $iterableExpr  The iterable expression being looped over
+     * @return ?Type  The element type, or null if it cannot be determined
+     */
+    public function getForeachElementType(Expr $iterableExpr): ?Type
+    {
+        $type = $this->type($iterableExpr);
+        if ($type instanceof IterableType) {
+            return $type->valueType(null);
+        }
+        return null;
+    }
+
+    /**
+     * Get the return type of a callback expression.
+     * Handles closures, arrow functions, and callable arrays/strings.
+     */
+    private function getCallbackReturnType(Expr $callback): ?Type
+    {
+        // Arrow function: fn($x) => $x->method()
+        if ($callback instanceof ArrowFunction) {
+            if ($callback->returnType !== null) {
+                return $this->typeParser->parse($callback->returnType);
+            }
+            // Try to infer from expression
+            return $this->type($callback->expr);
+        }
+
+        // Closure: function($x) { return $x->method(); }
+        if ($callback instanceof Closure) {
+            if ($callback->returnType !== null) {
+                return $this->typeParser->parse($callback->returnType);
+            }
+            // Could try to analyze return statements, but that's complex
+            return null;
+        }
+
+        // Callable array: [$object, 'methodName'] or [ClassName::class, 'methodName']
+        if ($callback instanceof Array_ && count($callback->items) === 2) {
+            $first = $callback->items[0]?->value;
+            $second = $callback->items[1]?->value;
+
+            if ($second instanceof \PhpParser\Node\Scalar\String_) {
+                $methodName = $second->value;
+                $classType = $this->type($first);
+                if ($classType !== null) {
+                    return $this->findDefType(
+                        $classType,
+                        $callback,
+                        fn(string $t): string => $this->namer->nameMeth($t, $methodName),
+                    );
+                }
+            }
+        }
+
+        return null;
+    }
+
     private function type(Expr|Name $x): ?Type
     {
         if ($x instanceof ArrayDimFetch) {
@@ -172,6 +274,31 @@ final class Types
         }
 
         if ($x instanceof FuncCall && $x->name instanceof Name && $x->name->toString() !== '') {
+            $funcName = $x->name->toString();
+
+            // Special handling for array_map - infer return type from callback
+            if ($funcName === 'array_map' && isset($x->args[0])) {
+                $callbackType = $this->getCallbackReturnType($x->args[0]->value);
+                if ($callbackType !== null) {
+                    return new UniformIterableType($callbackType);
+                }
+            }
+
+            // Special handling for array_filter - preserves input array type
+            if ($funcName === 'array_filter' && isset($x->args[0])) {
+                return $this->type($x->args[0]->value);
+            }
+
+            // Special handling for array_values - preserves element type
+            if ($funcName === 'array_values' && isset($x->args[0])) {
+                return $this->type($x->args[0]->value);
+            }
+
+            // Special handling for array_keys - returns array of keys
+            if ($funcName === 'array_keys') {
+                return new UniformIterableType(new NamedType('int|string'));
+            }
+
             $name = $this->namer->name($x->name);
             if ($name === null) {
                 return null;
@@ -254,6 +381,13 @@ final class Types
                 }
                 return new NamedType($name);
             }
+            // Look up local variable type
+            if (is_string($x->name)) {
+                $type = $this->getLocalVarType($x->name);
+                if ($type !== null) {
+                    return $type;
+                }
+            }
         }
 
         return null;
@@ -274,8 +408,13 @@ final class Types
      * @param  callable(non-empty-string): non-empty-string  $name
      * @return ?non-empty-string
      */
-    private function findDef(Expr|Name $x, array $types, callable $name): ?string
+    private function findDef(Expr|Name $x, array $types, callable $name, int $depth = 0): ?string
     {
+        // Limit recursion depth to prevent infinite loops
+        if ($depth > 15) {
+            return null;
+        }
+
         foreach ($types as $t) {
             $c = $name($t);
             if (array_key_exists($c, $this->defs)) {
@@ -284,11 +423,12 @@ final class Types
         }
         foreach ($types as $t) {
             $uppers = $this->uppers[$t] ?? [];
-            $c = $this->findDef($x, $uppers, $name);
+            $c = $this->findDef($x, $uppers, $name, $depth + 1);
             if ($c !== null) {
                 return $c;
             }
         }
+        // Try loading external dependencies and check their inheritance chains
         foreach ($types as $t) {
             $ident = $this->namer->extractIdent($t);
             if (!$this->composer->isDependency($ident)) {
@@ -299,13 +439,20 @@ final class Types
                 continue;
             }
             if (isset($this->seenDepFiles[$f])) {
-                return null;
+                continue;
             }
             $this->parser->traverse($f, $this, $this->collectDefs(...));
             $this->seenDepFiles[$f] = true;
-            $type = $this->type($x);
-            if ($type !== null) {
-                return $this->findDef($x, $type->flatten(), $name);
+
+            // After loading, check if we can now resolve via uppers (inheritance chain)
+            $uppers = $this->uppers[$t] ?? [];
+            if (!empty($uppers)) {
+                // Recursively try to find def in parent classes
+                // This handles cases like TestCase -> Assert where assertSame is in Assert
+                $c = $this->findDef($x, $uppers, $name, $depth + 1);
+                if ($c !== null) {
+                    return $c;
+                }
             }
         }
         return null;
@@ -316,6 +463,82 @@ final class Types
     {
         foreach ($filenames as $f) {
             $this->parser->traverse($f, $this, $this->collectDefs(...));
+        }
+    }
+
+    /**
+     * Set the current scope for local variable tracking.
+     * @param ?string $scope The method/function symbol, or null to clear
+     */
+    public function setCurrentScope(?string $scope): void
+    {
+        $this->currentScope = $scope;
+        if ($scope !== null && !isset($this->localVars[$scope])) {
+            $this->localVars[$scope] = [];
+        }
+    }
+
+    /**
+     * Get the current scope.
+     */
+    public function getCurrentScope(): ?string
+    {
+        return $this->currentScope;
+    }
+
+    /**
+     * Register a local variable with its type.
+     * @param string $varName The variable name (without $)
+     * @param Expr $expr The expression assigned to the variable
+     * @return ?Type The resolved type, or null if unknown
+     */
+    public function registerLocalVar(string $varName, Expr $expr): ?Type
+    {
+        if ($this->currentScope === null) {
+            return null;
+        }
+        $type = $this->type($expr);
+        if ($type !== null) {
+            $this->localVars[$this->currentScope][$varName] = $type;
+        }
+        return $type;
+    }
+
+    /**
+     * Register a local variable with a pre-computed type.
+     * Used for foreach loop variables where the type is derived from the iterable.
+     * @param string $varName The variable name (without $)
+     * @param ?Type $type The type to register, or null if unknown
+     */
+    public function registerLocalVarWithType(string $varName, ?Type $type): void
+    {
+        if ($this->currentScope === null || $type === null) {
+            return;
+        }
+        $this->localVars[$this->currentScope][$varName] = $type;
+    }
+
+    /**
+     * Get the type of a local variable.
+     * @param string $varName The variable name (without $)
+     * @return ?Type The type, or null if unknown
+     */
+    public function getLocalVarType(string $varName): ?Type
+    {
+        if ($this->currentScope === null) {
+            return null;
+        }
+        return $this->localVars[$this->currentScope][$varName] ?? null;
+    }
+
+    /**
+     * Clear local variables for a scope.
+     */
+    public function clearScope(?string $scope = null): void
+    {
+        $scope = $scope ?? $this->currentScope;
+        if ($scope !== null) {
+            unset($this->localVars[$scope]);
         }
     }
 

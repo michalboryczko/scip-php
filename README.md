@@ -12,6 +12,31 @@
 
 SCIP Code Intelligence Protocol (SCIP) indexer for PHP
 
+## Fork Improvements
+
+This fork includes several enhancements to SCIP relationship data and type resolution:
+
+### SCIP Relationship Improvements
+- **Method override relationships**: Method overrides now emit both `is_implementation` and `is_reference` flags, enabling bidirectional "Find References" between parent and child methods
+- **Extends vs implements distinction**: Class extension uses `is_reference`, interface implementation uses `is_implementation`
+- **Trait relationship handling**: Trait `use` statements emit both `is_reference` and `is_implementation` flags
+- **Type definition relationships**: Added `is_type_definition` for property types, parameter types, and return types (enables "Go to Type Definition")
+
+### Type Resolution Improvements
+- **Foreach loop variable types**: Loop variables now inherit element type from typed arrays (`Entity[]`)
+- **External dependency inheritance**: Methods inherited from external classes (PHPUnit, Symfony, etc.) now resolve correctly
+- **Array function type tracking**: `array_map`, `array_filter`, `array_values`, `array_keys` now track callback return types
+
+### Configuration
+- **Internal package config**: New `scip-php.json` config file to treat external packages as internal for full indexing:
+  ```json
+  {
+    "internal_packages": ["symfony/console"],
+    "internal_classes": ["Symfony\\Component\\Console\\Command\\Command"],
+    "internal_methods": ["Symfony\\Component\\Console\\Command\\Command::execute"]
+  }
+  ```
+
 ---
 
 This repository is indexed using itself and available on
