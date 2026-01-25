@@ -37,7 +37,7 @@
   - Creates self-extracting binary
 
 - [x] **Step 2.2:** Create build configuration
-  - PHP 8.3 with required extensions
+  - PHP 8.4 with required extensions
   - Extensions: bcmath, ctype, filter, mbstring, phar, tokenizer
 
 ## Phase 3: Package Metadata Updates

@@ -1,0 +1,12 @@
+php-version: "8.4"
+extensions:
+  - bcmath
+  - ctype
+  - filter
+  - mbstring
+  - phar
+  - tokenizer
+sapi:
+  - micro
+download-options:
+  prefer-pre-built: true

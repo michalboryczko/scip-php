@@ -176,17 +176,17 @@ This fork includes several enhancements over the original [davidrjenni/scip-php]
 The build script uses [static-php-cli](https://github.com/crazywhalecc/static-php-cli) to create a standalone executable:
 
 ```bash
-# Full build (downloads dependencies, builds PHP, creates binary)
-./build/build.sh
-
-# Clean build artifacts
-./build/build.sh clean
-
-# Show help
-./build/build.sh help
+cd build
+./build.sh
 ```
 
-The resulting binary includes PHP and all dependencies - no runtime installation required.
+The script will:
+1. Download the correct `spc` binary for your platform
+2. Build PHP 8.4 with required extensions using `craft.yml`
+3. Create a phar archive of scip-php
+4. Combine micro.sfx + phar into a standalone binary
+
+Output: `build/scip-php-<platform>` (e.g., `scip-php-darwin-aarch64`, `scip-php-linux-x86_64`)
 
 ---
 
