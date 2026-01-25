@@ -1,14 +1,27 @@
 {
-    "name": "davidrjenni/scip-php",
-    "description": "SCIP Code Intelligence Protocol (SCIP) indexer for PHP",
+    "name": "kloc/scip-php",
+    "description": "SCIP Code Intelligence Protocol (SCIP) indexer for PHP - Enhanced fork with improved relationship handling and standalone CLI",
     "license": "MIT",
     "keywords": [
         "scip",
-        "codeintel"
+        "codeintel",
+        "static-analysis",
+        "sourcegraph"
+    ],
+    "authors": [
+        {
+            "name": "Michal Kloc",
+            "email": "michal@kloc.dev"
+        },
+        {
+            "name": "David R. Jenni",
+            "email": "david.r.jenni@gmail.com",
+            "role": "Original Author"
+        }
     ],
     "support": {
-        "issues": "https://github.com/davidrjenni/scip-php/issues",
-        "source": "https://github.com/davidrjenni/scip-php"
+        "issues": "https://github.com/kloc-dev/scip-php/issues",
+        "source": "https://github.com/kloc-dev/scip-php"
     },
     "config": {
         "allow-plugins": {
@@ -66,6 +79,7 @@
             "@putenv XDEBUG_MODE=coverage",
             "phpunit"
         ],
-        "test": "phpunit --no-coverage"
+        "test": "phpunit --no-coverage",
+        "build": "build/build.sh"
     }
 }

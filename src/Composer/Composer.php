@@ -20,6 +20,7 @@ use function array_unique;
 use function array_values;
 use function class_exists;
 use function count;
+use function dirname;
 use function enum_exists;
 use function explode;
 use function function_exists;
@@ -78,6 +79,12 @@ final class Composer
      */
     private readonly array $internalConfig;
 
+    /** @var non-empty-string Path to the composer.json file */
+    private readonly string $composerJsonPath;
+
+    /** @var ?non-empty-string Path to the scip-php.json config file */
+    private readonly ?string $configPath;
+
     /**
      * @param  non-empty-string  $elem
      * @param  non-empty-string  $elems
@@ -88,10 +95,21 @@ final class Composer
         return implode(DIRECTORY_SEPARATOR, [$elem, ...$elems]);
     }
 
-    /** @param  non-empty-string  $projectRoot */
-    public function __construct(private readonly string $projectRoot)
-    {
-        $json = $this->parseJson('composer.json');
+    /**
+     * @param  non-empty-string       $projectRoot
+     * @param  ?non-empty-string      $composerJsonPath  Optional path to composer.json (default: <projectRoot>/composer.json)
+     * @param  ?non-empty-string      $configPath        Optional path to scip-php.json (default: <projectRoot>/scip-php.json)
+     */
+    public function __construct(
+        private readonly string $projectRoot,
+        ?string $composerJsonPath = null,
+        ?string $configPath = null,
+    ) {
+        // Resolve composer.json path
+        $this->composerJsonPath = $composerJsonPath ?? self::join($this->projectRoot, 'composer.json');
+        $this->configPath = $configPath;
+
+        $json = $this->parseJsonFile($this->composerJsonPath);
         $autoload = is_array($json['autoload'] ?? null) ? $json['autoload'] : [];
         $autoloadDev = is_array($json['autoload-dev'] ?? null) ? $json['autoload-dev'] : [];
 
@@ -161,8 +179,10 @@ final class Composer
         $pkgsByPaths[$composerPath] = ['name' => 'composer', 'version' => 'dev'];
         $this->pkgsByPaths = $pkgsByPaths;
 
-
-        $lock = $this->parseJson('composer.lock');
+        // Load composer.lock from the same directory as composer.json
+        $composerDir = dirname($this->composerJsonPath);
+        $lockFile = self::join($composerDir, 'composer.lock');
+        $lock = $this->parseJsonFile($lockFile);
         if (is_array($lock['packages'] ?? null)) {
             foreach ($lock['packages'] as $pkg) {
                 if (
@@ -203,7 +223,9 @@ final class Composer
     private function loadInternalConfig(): array
     {
         $default = ['packages' => [], 'classes' => [], 'methods' => []];
-        $configFile = self::join($this->projectRoot, 'scip-php.json');
+
+        // Use provided config path, or default to <projectRoot>/scip-php.json
+        $configFile = $this->configPath ?? self::join($this->projectRoot, 'scip-php.json');
 
         if (!is_file($configFile)) {
             return $default;
@@ -230,15 +252,19 @@ final class Composer
     }
 
     /**
-     * @param  non-empty-string  $filename
+     * Parse a JSON file from an absolute path.
+     * @param  non-empty-string  $filePath
      * @return array<string, mixed>
      */
-    private function parseJson(string $filename): array
+    private function parseJsonFile(string $filePath): array
     {
-        $content = Reader::read(self::join($this->projectRoot, $filename));
+        if (!is_file($filePath)) {
+            throw new RuntimeException("File not found: {$filePath}.");
+        }
+        $content = Reader::read($filePath);
         $json = json_decode($content, associative: true, flags: JSON_THROW_ON_ERROR);
         if (!is_array($json)) {
-            throw new RuntimeException("Cannot parse {$filename}.");
+            throw new RuntimeException("Cannot parse {$filePath}.");
         }
         return $json;
     }

@@ -1,20 +1,159 @@
 # scip-php
 
-[![CI](https://github.com/davidrjenni/scip-php/actions/workflows/ci.yml/badge.svg)](https://github.com/davidrjenni/scip-php/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/davidrjenni/scip-php/branch/main/graph/badge.svg?token=JYJNWGSDWL)](https://codecov.io/gh/davidrjenni/scip-php)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/davidrjenni/scip-php/badge)](https://api.securityscorecards.dev/projects/github.com/davidrjenni/scip-php)
-[![License: MIT](https://img.shields.io/github/license/davidrjenni/scip-php)](https://github.com/davidrjenni/scip-php/blob/main/LICENSE)
-[![Packagist Version](https://img.shields.io/packagist/v/davidrjenni/scip-php)](https://packagist.org/packages/davidrjenni/scip-php)
-[![PHP Version](https://img.shields.io/packagist/php-v/davidrjenni/scip-php)](https://packagist.org/packages/davidrjenni/scip-php)
-[![Docker Image Version](https://img.shields.io/docker/v/davidrjenni/scip-php?label=docker)](https://hub.docker.com/r/davidrjenni/scip-php)
-[![Docker Image Size](https://img.shields.io/docker/image-size/davidrjenni/scip-php)](https://hub.docker.com/r/davidrjenni/scip-php)
-[![Contributors](https://img.shields.io/github/contributors/davidrjenni/scip-php.svg)](https://github.com/davidrjenni/scip-php/contributors)
+[![License: MIT](https://img.shields.io/github/license/kloc-dev/scip-php)](https://github.com/kloc-dev/scip-php/blob/main/LICENSE)
 
 SCIP Code Intelligence Protocol (SCIP) indexer for PHP
 
+> **Note:** This is a fork of [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php) with additional features and improvements. See [Fork Improvements](#fork-improvements) below.
+
+---
+
+## Features
+
+- Generate SCIP indexes for PHP projects
+- Standalone CLI with flexible configuration options
+- Support for custom project paths and configuration files
+- Optional static binary build (no PHP runtime required)
+- Enhanced SCIP relationship data for better code navigation
+
+## Requirements
+
+- PHP 8.3+
+- Composer
+
+For projects to be indexed:
+- `composer.json` and `composer.lock` files
+- Dependencies installed in the vendor directory
+
+## Installation
+
+### Via Composer (recommended)
+
+```bash
+composer require --dev kloc/scip-php
+```
+
+### Static Binary (no PHP required)
+
+Download pre-built binaries from the [releases page](https://github.com/kloc-dev/scip-php/releases) or build your own:
+
+```bash
+./build/build.sh
+# Output: build/output/scip-php-<platform>
+```
+
+Supported platforms:
+- Linux x86_64
+- Linux aarch64 (ARM64)
+- macOS x86_64
+- macOS aarch64 (Apple Silicon)
+
+## Usage
+
+### Basic Usage
+
+```bash
+# Index current directory
+vendor/bin/scip-php
+
+# Index specific project
+vendor/bin/scip-php -d /path/to/project
+
+# Custom output file
+vendor/bin/scip-php -o output/index.scip
+```
+
+### CLI Options
+
+```
+Usage: scip-php [options]
+
+Options:
+  -h, --help                   Display help and exit
+  -d, --project-dir=PATH       Project directory to index (default: current directory)
+  -c, --composer=PATH          Path to composer.json (default: <project-dir>/composer.json)
+      --config=PATH            Path to scip-php.json config (default: <project-dir>/scip-php.json)
+  -o, --output=PATH            Output file path (default: index.scip)
+      --memory-limit=SIZE      Memory limit (default: 1G)
+```
+
+### Examples
+
+```bash
+# Index a project with custom paths
+scip-php -d /my/project -o /output/index.scip
+
+# Use custom composer.json location
+scip-php --composer=/shared/composer.json
+
+# Use custom configuration
+scip-php --config=/configs/scip-php.json
+
+# Increase memory for large projects
+scip-php --memory-limit=4G
+```
+
+### Uploading to Sourcegraph
+
+After generating the index, upload it to Sourcegraph:
+
+```bash
+# Generate index
+vendor/bin/scip-php
+
+# Upload to Sourcegraph
+src code-intel upload
+```
+
+For private Sourcegraph instances, set environment variables:
+```bash
+export SRC_ENDPOINT=https://sourcegraph.example.com
+export SRC_ACCESS_TOKEN=your-token
+src code-intel upload
+```
+
+## Configuration
+
+### scip-php.json
+
+Create a `scip-php.json` file in your project root to configure indexer behavior:
+
+```json
+{
+    "internal_packages": [
+        "symfony/console",
+        "doctrine/orm"
+    ],
+    "internal_classes": [
+        "Symfony\\Component\\Console\\Command\\Command",
+        "Doctrine\\ORM\\EntityManagerInterface"
+    ],
+    "internal_methods": [
+        "Symfony\\Component\\Console\\Command\\Command::execute"
+    ]
+}
+```
+
+#### Configuration Options
+
+| Option | Description |
+|--------|-------------|
+| `internal_packages` | Treat entire packages as internal (full indexing) |
+| `internal_classes` | Treat specific classes as internal |
+| `internal_methods` | Treat specific methods as internal |
+
+By default, external dependencies are indexed with limited detail. Use these options to get full relationship and reference data for specific external code.
+
+---
+
 ## Fork Improvements
 
-This fork includes several enhancements to SCIP relationship data and type resolution:
+This fork includes several enhancements over the original [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php):
+
+### Standalone CLI Application
+- Project directory, composer.json, and config file can be specified via CLI arguments
+- No longer requires installation as a project dependency
+- Can be built as a static binary for environments without PHP
 
 ### SCIP Relationship Improvements
 - **Method override relationships**: Method overrides now emit both `is_implementation` and `is_reference` flags, enabling bidirectional "Find References" between parent and child methods
@@ -27,88 +166,79 @@ This fork includes several enhancements to SCIP relationship data and type resol
 - **External dependency inheritance**: Methods inherited from external classes (PHPUnit, Symfony, etc.) now resolve correctly
 - **Array function type tracking**: `array_map`, `array_filter`, `array_values`, `array_keys` now track callback return types
 
-### Configuration
-- **Internal package config**: New `scip-php.json` config file to treat external packages as internal for full indexing:
-  ```json
-  {
-    "internal_packages": ["symfony/console"],
-    "internal_classes": ["Symfony\\Component\\Console\\Command\\Command"],
-    "internal_methods": ["Symfony\\Component\\Console\\Command\\Command::execute"]
-  }
-  ```
+### Configuration System
+- **Internal package config**: New `scip-php.json` config file to treat external packages as internal for full indexing
 
 ---
 
-This repository is indexed using itself and available on
-[Sourcegraph](https://sourcegraph.com/github.com/davidrjenni/scip-php).
+## Building Static Binary
 
-And here is a Sourcegraph notebook with a
-[demo](https://sourcegraph.com/notebooks/Tm90ZWJvb2s6MjI2NQ==) and
-additional explanations.
-
-## Requirements
-
-- `scip-php` must be run in the root directory of the project you want
-  to index.
-- It needs the `composer.json` and `composer.lock` files in the current
-  working directory.
-- Also, `scip-php` needs an up-to-date autoloader and the dependencies
-  must be installed in the vendor directory.
-
-## Usage
-
-### Manual
-
-Install [`scip-php`](https://packagist.org/packages/davidrjenni/scip-php)
-with `composer` and the
-[`src`](https://docs.sourcegraph.com/cli/quickstart) binary. Then generate
-the SCIP index and upload it:
+The build script uses [static-php-cli](https://github.com/crazywhalecc/static-php-cli) to create a standalone executable:
 
 ```bash
-composer require --dev davidrjenni/scip-php
-vendor/bin/scip-php
-src code-intel upload
+# Full build (downloads dependencies, builds PHP, creates binary)
+./build/build.sh
+
+# Clean build artifacts
+./build/build.sh clean
+
+# Show help
+./build/build.sh help
 ```
 
-### Private Sourcegraph Instance
+The resulting binary includes PHP and all dependencies - no runtime installation required.
 
-To use a private Sourcegraph instance, set the
-`SRC_ENDPOINT` and `SRC_ACCESS_TOKEN` [environment
-variables](https://docs.sourcegraph.com/cli/explanations/env) first.
-
-## Contributing
-
-See the [contributing guidelines](CONTRIBUTING.md).
+---
 
 ## Development
 
-- Run `composer lint` to run all linters.
-- Run `composer test` to run the unit tests.
-- Run `composer cover` to generate a coverage report.
+### Running Tests
 
-### Inspecting the Output
+```bash
+composer test
+```
 
-- Install the `scip` cli from
-  [github.com/sourcegraph/scip](https://github.com/sourcegraph/scip).
-- Run `bin/scip-php` to generate the SCIP index.
-- Run `scip snapshot` to generate snapshot files which can be used for
-  inspecting the output of the index.
-- See the
-  [documentation](https://github.com/sourcegraph/scip/blob/main/docs/CLI.md)
-  for further functionality.
+### Running Linters
 
-### Bindings
+```bash
+composer lint
+```
 
-The directory [`src/Bindings`](src/Bindings) contains auto-generated
-bindings for SCIP.  To update the bindings, download the protobuf schema
-for SCIP and regenerate the bindings:
+### Generating Coverage Report
+
+```bash
+composer cover
+```
+
+### Inspecting Output
+
+```bash
+# Install scip CLI from https://github.com/sourcegraph/scip
+# Generate index
+bin/scip-php
+
+# Generate snapshot files for inspection
+scip snapshot
+
+# Print index as JSON
+scip print --json index.scip
+```
+
+### Updating SCIP Bindings
 
 ```bash
 wget -O src/Bindings/scip.proto https://raw.githubusercontent.com/sourcegraph/scip/main/scip.proto
 composer gen-bindings
 ```
 
-The protobuf compiler `protoc` must be present to generate the bindings.
+---
 
-See [github.com/sourcegraph/scip](https://github.com/sourcegraph/scip)
-for further information.
+## Credits
+
+- Original package: [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php) by David R. Jenni
+- SCIP specification: [sourcegraph/scip](https://github.com/sourcegraph/scip)
+- Static binary build: [static-php-cli](https://github.com/crazywhalecc/static-php-cli)
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.

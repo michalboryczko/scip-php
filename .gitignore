@@ -3,3 +3,4 @@
 /index.scip
 /tests/Indexer/testdata/actual/
 /vendor/
+build/output/

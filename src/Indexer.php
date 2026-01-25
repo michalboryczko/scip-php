@@ -34,11 +34,15 @@ final readonly class Indexer
      * @param  non-empty-string        $projectRoot
      * @param  non-empty-string        $version
      * @param  list<non-empty-string>  $args
+     * @param  ?non-empty-string       $composerJsonPath  Optional path to composer.json
+     * @param  ?non-empty-string       $configPath        Optional path to scip-php.json
      */
     public function __construct(
         private string $projectRoot,
         string $version,
         array $args,
+        ?string $composerJsonPath = null,
+        ?string $configPath = null,
     ) {
         $this->metadata = new Metadata([
             'version'                => 1,
@@ -52,7 +56,7 @@ final readonly class Indexer
         ]);
 
         $this->parser = new Parser();
-        $this->composer = new Composer($this->projectRoot);
+        $this->composer = new Composer($this->projectRoot, $composerJsonPath, $configPath);
         $this->namer = new SymbolNamer($this->composer);
         $this->types = new Types($this->composer, $this->namer);
     }
