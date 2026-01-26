@@ -44,6 +44,8 @@ use function str_starts_with;
 use function trait_exists;
 use function trim;
 
+use Phar;
+
 use const DIRECTORY_SEPARATOR;
 use const JSON_THROW_ON_ERROR;
 use const PHP_VERSION;
@@ -113,11 +115,23 @@ final class Composer
         $autoload = is_array($json['autoload'] ?? null) ? $json['autoload'] : [];
         $autoloadDev = is_array($json['autoload-dev'] ?? null) ? $json['autoload-dev'] : [];
 
-        $scipPhpVendorDir = $this->projectRoot . '/vendor';
-        if (realpath($scipPhpVendorDir) === false) {
-            throw new RuntimeException("Invalid scip-php vendor directory: {$scipPhpVendorDir}.");
+        // Determine scip-php's vendor directory
+        // When running from phar, use phar's bundled vendor; otherwise use project vendor
+        $pharPath = Phar::running(false);
+        if ($pharPath !== '') {
+            // Running from phar - use bundled vendor
+            $this->scipPhpVendorDir = 'phar://' . $pharPath . '/vendor';
+        } else {
+            // Running from source - use project vendor or scip-php's vendor
+            $scipPhpVendorDir = dirname(__DIR__, 2) . '/vendor';
+            if (!is_dir($scipPhpVendorDir)) {
+                $scipPhpVendorDir = $this->projectRoot . '/vendor';
+            }
+            if (!is_dir($scipPhpVendorDir)) {
+                throw new RuntimeException("Invalid scip-php vendor directory: {$scipPhpVendorDir}.");
+            }
+            $this->scipPhpVendorDir = $scipPhpVendorDir;
         }
-        $this->scipPhpVendorDir = realpath($scipPhpVendorDir);
 
         $bin = [];
         if (is_array($json['bin'] ?? null)) {
@@ -139,10 +153,9 @@ final class Composer
         }
         $this->vendorDir = self::join($projectRoot, $vendorDir);
 
-        $projectAutoload = Reader::read(self::join($this->vendorDir, 'autoload.php'));
-        $scipPhpAutoload = Reader::read(self::join($this->scipPhpVendorDir, 'autoload.php'));
-        $autoloadDir = $projectAutoload === $scipPhpAutoload ? $this->scipPhpVendorDir : $this->vendorDir;
-        $this->loader = require self::join($autoloadDir, 'autoload.php');
+        // Always use scip-php's bundled vendor for runtime autoloading
+        // Target project's vendor is only scanned for indexing, never loaded
+        $this->loader = require self::join($this->scipPhpVendorDir, 'autoload.php');
 
         $installed = require self::join($this->vendorDir, 'composer', 'installed.php');
         $this->pkgName = $installed['root']['name'];
@@ -166,8 +179,8 @@ final class Composer
             if (!isset($info['install_path'])) {
                 continue;
             }
-            $path = realpath($info['install_path']);
-            if ($path === false) {
+            $path = $info['install_path'];
+            if (!is_dir($path)) {
                 throw new RuntimeException("Invalid install path of package {$name}: {$info['install_path']}.");
             }
             if ($name !== $this->pkgName) {
@@ -329,8 +342,8 @@ final class Composer
                 continue;
             }
             $p = self::join($this->projectRoot, $p);
-            if (realpath($p) !== false) {
-                $files[] = realpath($p);
+            if (is_file($p) || is_dir($p)) {
+                $files[] = $p;
             }
         }
         return $files;
@@ -425,19 +438,15 @@ final class Composer
      */
     public function findFile(string $ident): ?string
     {
+        // PHP built-ins don't have files - they're external symbols
         $stub = $this->stub($ident);
         if ($stub !== null) {
-            $f = self::join($this->scipPhpVendorDir, 'jetbrains', 'phpstorm-stubs', $stub);
-            $f = realpath($f);
-            if ($f === false) {
-                throw new RuntimeException("Invalid path to stub file: {$stub}.");
-            }
-            return $f;
+            return null;
         }
 
         $f = $this->loader->findFile($ident);
-        if ($f !== false && realpath($f) !== false) {
-            return realpath($f);
+        if ($f !== false && is_file($f)) {
+            return $f;
         }
 
         if (function_exists($ident)) {
@@ -569,22 +578,22 @@ final class Composer
 
         $files = get_included_files();
         foreach ($files as $f) {
-            if ($f === '' || realpath($f) === false) {
+            if ($f === '' || !is_file($f)) {
                 continue;
             }
 
             $content = Reader::read($f);
             if (preg_match($defineConstPattern, $content) === 1) {
-                return realpath($f);
+                return $f;
             }
             if (preg_match($assignConstPattern, $content) !== 1) {
                 continue;
             }
             if ($hasNs && preg_match($nsPattern, $content) === 1) {
-                return realpath($f);
+                return $f;
             }
             if (!$hasNs && preg_match($anyNsPattern, $content) === 0) {
-                return realpath($f);
+                return $f;
             }
         }
         return null;

@@ -4,112 +4,121 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-get_platform() {
-    local os arch
+get_os() {
     case "$(uname -s)" in
-        Linux*)  os="linux" ;;
-        Darwin*) os="darwin" ;;
-        *) echo "Unsupported OS"; exit 1 ;;
+        Linux*)  echo "linux" ;;
+        Darwin*) echo "darwin" ;;
+        *) echo "Unsupported OS" >&2; exit 1 ;;
     esac
+}
+
+get_arch() {
     case "$(uname -m)" in
-        x86_64|amd64) arch="x86_64" ;;
-        aarch64|arm64) arch="aarch64" ;;
-        *) echo "Unsupported architecture"; exit 1 ;;
+        x86_64|amd64) echo "x86_64" ;;
+        aarch64|arm64) echo "aarch64" ;;
+        *) echo "Unsupported architecture" >&2; exit 1 ;;
     esac
-    echo "${os}-${arch}"
 }
 
 get_spc_url() {
-    local os
-    case "$(uname -s)" in
-        Linux*)  os="linux" ;;
-        Darwin*) os="macos" ;;
+    local os=$1 arch=$2
+    local spc_os
+    case "$os" in
+        linux)  spc_os="linux" ;;
+        darwin) spc_os="macos" ;;
     esac
-    case "$(uname -m)" in
-        x86_64|amd64) echo "https://dl.static-php.dev/static-php-cli/spc-bin/nightly/spc-${os}-x86_64" ;;
-        aarch64|arm64) echo "https://dl.static-php.dev/static-php-cli/spc-bin/nightly/spc-${os}-aarch64" ;;
-    esac
+    echo "https://dl.static-php.dev/static-php-cli/spc-bin/nightly/spc-${spc_os}-${arch}"
 }
 
-cd "$SCRIPT_DIR"
+OS=$(get_os)
+ARCH=$(get_arch)
+PLATFORM="${OS}-${ARCH}"
+OUTPUT="scip-php"
 
-# Download spc if not present
+echo "Building scip-php for ${PLATFORM}..."
+
+# Step 1: Create tmp build directory and copy codebase (without vendor)
+BUILD_TMP="$SCRIPT_DIR/tmp"
+rm -rf "$BUILD_TMP"
+mkdir -p "$BUILD_TMP"
+
+echo "Copying source to tmp build dir..."
+cp -r "$PROJECT_DIR/src" "$BUILD_TMP/"
+cp -r "$PROJECT_DIR/bin" "$BUILD_TMP/"
+cp "$PROJECT_DIR/composer.json" "$BUILD_TMP/"
+cp "$PROJECT_DIR/composer.lock" "$BUILD_TMP/"
+
+# Step 2: Install vendors using Docker Alpine with PHP
+echo "Installing dependencies via Docker Alpine..."
+docker run --rm \
+    -v "$BUILD_TMP:/app" \
+    -w /app \
+    php:8.4-cli-alpine \
+    sh -c "apk add --no-cache git unzip && \
+           curl -sS https://getcomposer.org/installer | php && \
+           php composer.phar install --no-dev --no-scripts --prefer-dist --optimize-autoloader"
+
+# Step 3: Download spc if not present
+cd "$SCRIPT_DIR"
 if [[ ! -f "spc" ]]; then
     echo "Downloading static-php-cli..."
-    curl -fsSL -o spc "$(get_spc_url)"
+    curl -fsSL -o spc "$(get_spc_url "$OS" "$ARCH")"
     chmod +x spc
 fi
 
-# Build PHP with micro sapi
-echo "Building PHP..."
+# Step 4: Build micro.sfx
+echo "Building PHP micro..."
 ./spc craft
 
-# Ensure vendor is installed
-if [[ ! -d "$PROJECT_DIR/vendor" ]]; then
-    echo "Installing dependencies..."
-    composer install --no-dev -d "$PROJECT_DIR"
-fi
-
-# Create phar with all code and dependencies
+# Step 5: Create phar from tmp build dir
 echo "Creating phar..."
-./buildroot/bin/php -d phar.readonly=0 << 'PHARSCRIPT'
-<?php
-$projectDir = dirname(__DIR__);
-$pharFile = __DIR__ . '/scip-php.phar';
-
-if (file_exists($pharFile)) {
-    unlink($pharFile);
-}
+./buildroot/bin/php -d phar.readonly=0 -r '
+$pharFile = "'"$SCRIPT_DIR"'/scip-php.phar";
+$buildDir = "'"$BUILD_TMP"'";
 
 $phar = new Phar($pharFile);
 $phar->startBuffering();
 
-// Add all PHP files from src/
-$phar->buildFromIterator(
-    new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($projectDir . '/src', FilesystemIterator::SKIP_DOTS)
-    ),
-    $projectDir
+// Add src/
+$srcIter = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($buildDir . "/src", FilesystemIterator::SKIP_DOTS)
 );
+foreach ($srcIter as $file) {
+    if ($file->isFile()) {
+        $phar->addFile($file->getPathname(), "src/" . $srcIter->getSubPathname());
+    }
+}
 
-// Add bin/scip-php
-$phar->addFile($projectDir . '/bin/scip-php', 'bin/scip-php');
-
-// Add vendor/ (dependencies)
-$phar->buildFromIterator(
-    new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($projectDir . '/vendor', FilesystemIterator::SKIP_DOTS)
-    ),
-    $projectDir
+// Add vendor/
+$vendorIter = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($buildDir . "/vendor", FilesystemIterator::SKIP_DOTS)
 );
+foreach ($vendorIter as $file) {
+    if ($file->isFile()) {
+        $phar->addFile($file->getPathname(), "vendor/" . $vendorIter->getSubPathname());
+    }
+}
 
-// Add composer.json
-$phar->addFile($projectDir . '/composer.json', 'composer.json');
+// Add bin/scip-php and composer.json
+$phar->addFile($buildDir . "/bin/scip-php", "bin/scip-php");
+$phar->addFile($buildDir . "/composer.json", "composer.json");
 
-$stub = <<<'STUB'
-#!/usr/bin/env php
-<?php
-Phar::mapPhar('scip-php.phar');
-require 'phar://scip-php.phar/vendor/autoload.php';
-require 'phar://scip-php.phar/bin/scip-php';
-__HALT_COMPILER();
-STUB;
-
+$stub = "#!/usr/bin/env php\n<?php\nPhar::mapPhar(\"scip-php.phar\");\nrequire \"phar://scip-php.phar/vendor/autoload.php\";\nrequire \"phar://scip-php.phar/bin/scip-php\";\n__HALT_COMPILER();\n";
 $phar->setStub($stub);
 $phar->stopBuffering();
+echo "Phar: " . filesize($pharFile) . " bytes\n";
+'
 
-echo "Phar created: " . filesize($pharFile) . " bytes\n";
-PHARSCRIPT
-
-# Combine micro.sfx + phar = standalone binary
-PLATFORM=$(get_platform)
-OUTPUT="scip-php-${PLATFORM}"
-echo "Creating binary: ${OUTPUT}"
-cat buildroot/bin/micro.sfx scip-php.phar > "$OUTPUT"
+# Step 6: Combine using spc micro:combine
+echo "Creating binary..."
+./spc micro:combine scip-php.phar -O "$OUTPUT"
 chmod +x "$OUTPUT"
+
+# Cleanup all build artifacts
+rm -rf "$BUILD_TMP" buildroot downloads source pkgroot log spc scip-php.phar
 
 echo ""
 echo "Done! Binary: build/${OUTPUT}"
 echo "Size: $(du -h "$OUTPUT" | cut -f1)"
 echo ""
-echo "Usage: ./${OUTPUT} -d /path/to/project"
+echo "Usage: ./build/${OUTPUT} -d /path/to/project"

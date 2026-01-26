@@ -7,6 +7,7 @@ extensions:
   - phar
   - tokenizer
 sapi:
+  - cli
   - micro
 download-options:
   prefer-pre-built: true
