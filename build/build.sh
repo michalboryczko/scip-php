@@ -114,8 +114,12 @@ echo "Creating binary..."
 ./spc micro:combine scip-php.phar -O "$OUTPUT"
 chmod +x "$OUTPUT"
 
-# Cleanup all build artifacts
-rm -rf "$BUILD_TMP" buildroot downloads source pkgroot log spc scip-php.phar
+# Cleanup all build artifacts (ignore permission errors)
+rm -rf "$BUILD_TMP" buildroot downloads source pkgroot log spc scip-php.phar 2>/dev/null || true
+
+# Copy to bin/ for consistency
+mkdir -p "$PROJECT_DIR/bin"
+cp "$OUTPUT" "$PROJECT_DIR/bin/scip-php" 2>/dev/null || true
 
 echo ""
 echo "Done! Binary: build/${OUTPUT}"
