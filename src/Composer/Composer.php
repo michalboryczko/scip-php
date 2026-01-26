@@ -20,6 +20,7 @@ use function array_unique;
 use function array_values;
 use function class_exists;
 use function count;
+use function dirname;
 use function enum_exists;
 use function explode;
 use function function_exists;
@@ -37,10 +38,13 @@ use function preg_replace;
 use function realpath;
 use function rtrim;
 use function str_contains;
+use function str_ends_with;
 use function str_replace;
 use function str_starts_with;
 use function trait_exists;
 use function trim;
+
+use Phar;
 
 use const DIRECTORY_SEPARATOR;
 use const JSON_THROW_ON_ERROR;
@@ -72,6 +76,18 @@ final class Composer
     private readonly array $userConsts;
 
     /**
+     * Configuration for treating external packages as internal.
+     * @var array{packages: list<string>, classes: list<string>, methods: list<string>}
+     */
+    private readonly array $internalConfig;
+
+    /** @var non-empty-string Path to the composer.json file */
+    private readonly string $composerJsonPath;
+
+    /** @var ?non-empty-string Path to the scip-php.json config file */
+    private readonly ?string $configPath;
+
+    /**
      * @param  non-empty-string  $elem
      * @param  non-empty-string  $elems
      * @return non-empty-string
@@ -81,18 +97,41 @@ final class Composer
         return implode(DIRECTORY_SEPARATOR, [$elem, ...$elems]);
     }
 
-    /** @param  non-empty-string  $projectRoot */
-    public function __construct(private readonly string $projectRoot)
-    {
-        $json = $this->parseJson('composer.json');
+    /**
+     * @param  non-empty-string       $projectRoot
+     * @param  ?non-empty-string      $composerJsonPath  Optional path to composer.json (default: <projectRoot>/composer.json)
+     * @param  ?non-empty-string      $configPath        Optional path to scip-php.json (default: <projectRoot>/scip-php.json)
+     */
+    public function __construct(
+        private readonly string $projectRoot,
+        ?string $composerJsonPath = null,
+        ?string $configPath = null,
+    ) {
+        // Resolve composer.json path
+        $this->composerJsonPath = $composerJsonPath ?? self::join($this->projectRoot, 'composer.json');
+        $this->configPath = $configPath;
+
+        $json = $this->parseJsonFile($this->composerJsonPath);
         $autoload = is_array($json['autoload'] ?? null) ? $json['autoload'] : [];
         $autoloadDev = is_array($json['autoload-dev'] ?? null) ? $json['autoload-dev'] : [];
 
-        $scipPhpVendorDir = self::join(__DIR__, '..', '..', 'vendor');
-        if (realpath($scipPhpVendorDir) === false) {
-            throw new RuntimeException("Invalid scip-php vendor directory: {$scipPhpVendorDir}.");
+        // Determine scip-php's vendor directory
+        // When running from phar, use phar's bundled vendor; otherwise use project vendor
+        $pharPath = Phar::running(false);
+        if ($pharPath !== '') {
+            // Running from phar - use bundled vendor
+            $this->scipPhpVendorDir = 'phar://' . $pharPath . '/vendor';
+        } else {
+            // Running from source - use project vendor or scip-php's vendor
+            $scipPhpVendorDir = dirname(__DIR__, 2) . '/vendor';
+            if (!is_dir($scipPhpVendorDir)) {
+                $scipPhpVendorDir = $this->projectRoot . '/vendor';
+            }
+            if (!is_dir($scipPhpVendorDir)) {
+                throw new RuntimeException("Invalid scip-php vendor directory: {$scipPhpVendorDir}.");
+            }
+            $this->scipPhpVendorDir = $scipPhpVendorDir;
         }
-        $this->scipPhpVendorDir = realpath($scipPhpVendorDir);
 
         $bin = [];
         if (is_array($json['bin'] ?? null)) {
@@ -114,10 +153,9 @@ final class Composer
         }
         $this->vendorDir = self::join($projectRoot, $vendorDir);
 
-        $projectAutoload = Reader::read(self::join($this->vendorDir, 'autoload.php'));
-        $scipPhpAutoload = Reader::read(self::join($this->scipPhpVendorDir, 'autoload.php'));
-        $autoloadDir = $projectAutoload === $scipPhpAutoload ? $this->scipPhpVendorDir : $this->vendorDir;
-        $this->loader = require self::join($autoloadDir, 'autoload.php');
+        // Always use scip-php's bundled vendor for runtime autoloading
+        // Target project's vendor is only scanned for indexing, never loaded
+        $this->loader = require self::join($this->scipPhpVendorDir, 'autoload.php');
 
         $installed = require self::join($this->vendorDir, 'composer', 'installed.php');
         $this->pkgName = $installed['root']['name'];
@@ -141,8 +179,8 @@ final class Composer
             if (!isset($info['install_path'])) {
                 continue;
             }
-            $path = realpath($info['install_path']);
-            if ($path === false) {
+            $path = $info['install_path'];
+            if (!is_dir($path)) {
                 throw new RuntimeException("Invalid install path of package {$name}: {$info['install_path']}.");
             }
             if ($name !== $this->pkgName) {
@@ -154,8 +192,10 @@ final class Composer
         $pkgsByPaths[$composerPath] = ['name' => 'composer', 'version' => 'dev'];
         $this->pkgsByPaths = $pkgsByPaths;
 
-
-        $lock = $this->parseJson('composer.lock');
+        // Load composer.lock from the same directory as composer.json
+        $composerDir = dirname($this->composerJsonPath);
+        $lockFile = self::join($composerDir, 'composer.lock');
+        $lock = $this->parseJsonFile($lockFile);
         if (is_array($lock['packages'] ?? null)) {
             foreach ($lock['packages'] as $pkg) {
                 if (
@@ -184,18 +224,60 @@ final class Composer
         $this->loader->addClassMap($additionalClasses);
 
         $this->userConsts = get_defined_constants(categorize: true)['user'] ?? []; // @phpstan-ignore-line
+
+        // Load scip-php.json config for treating external packages as internal
+        $this->internalConfig = $this->loadInternalConfig();
     }
 
     /**
-     * @param  non-empty-string  $filename
+     * Load the scip-php.json configuration file.
+     * @return array{packages: list<string>, classes: list<string>, methods: list<string>}
+     */
+    private function loadInternalConfig(): array
+    {
+        $default = ['packages' => [], 'classes' => [], 'methods' => []];
+
+        // Use provided config path, or default to <projectRoot>/scip-php.json
+        $configFile = $this->configPath ?? self::join($this->projectRoot, 'scip-php.json');
+
+        if (!is_file($configFile)) {
+            return $default;
+        }
+
+        $content = Reader::read($configFile);
+        $config = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+
+        if (!is_array($config)) {
+            return $default;
+        }
+
+        return [
+            'packages' => is_array($config['internal_packages'] ?? null)
+                ? array_values(array_filter($config['internal_packages'], 'is_string'))
+                : [],
+            'classes' => is_array($config['internal_classes'] ?? null)
+                ? array_values(array_filter($config['internal_classes'], 'is_string'))
+                : [],
+            'methods' => is_array($config['internal_methods'] ?? null)
+                ? array_values(array_filter($config['internal_methods'], 'is_string'))
+                : [],
+        ];
+    }
+
+    /**
+     * Parse a JSON file from an absolute path.
+     * @param  non-empty-string  $filePath
      * @return array<string, mixed>
      */
-    private function parseJson(string $filename): array
+    private function parseJsonFile(string $filePath): array
     {
-        $content = Reader::read(self::join($this->projectRoot, $filename));
+        if (!is_file($filePath)) {
+            throw new RuntimeException("File not found: {$filePath}.");
+        }
+        $content = Reader::read($filePath);
         $json = json_decode($content, associative: true, flags: JSON_THROW_ON_ERROR);
         if (!is_array($json)) {
-            throw new RuntimeException("Cannot parse {$filename}.");
+            throw new RuntimeException("Cannot parse {$filePath}.");
         }
         return $json;
     }
@@ -260,8 +342,8 @@ final class Composer
                 continue;
             }
             $p = self::join($this->projectRoot, $p);
-            if (realpath($p) !== false) {
-                $files[] = realpath($p);
+            if (is_file($p) || is_dir($p)) {
+                $files[] = $p;
             }
         }
         return $files;
@@ -276,7 +358,47 @@ final class Composer
     /** @param  non-empty-string  $ident */
     public function isDependency(string $ident): bool
     {
+        // Check if the identifier is configured as internal
+        if ($this->isConfiguredAsInternal($ident)) {
+            return false;
+        }
         return !$this->isFromProject($ident);
+    }
+
+    /**
+     * Check if an identifier is configured to be treated as internal.
+     * @param  non-empty-string  $ident
+     */
+    private function isConfiguredAsInternal(string $ident): bool
+    {
+        // Check against configured methods (e.g., "App\\Service\\MyClass::myMethod")
+        foreach ($this->internalConfig['methods'] as $method) {
+            if ($ident === $method || str_ends_with($ident, '\\' . $method)) {
+                return true;
+            }
+        }
+
+        // Check against configured classes (e.g., "App\\Service\\MyClass")
+        foreach ($this->internalConfig['classes'] as $class) {
+            // Match exact class or any member of the class
+            if ($ident === $class || str_starts_with($ident, $class . '::') || str_starts_with($ident, $class . '\\')) {
+                return true;
+            }
+        }
+
+        // Check against configured packages (e.g., "vendor/package")
+        $f = $this->findFile($ident);
+        if ($f !== null) {
+            foreach ($this->internalConfig['packages'] as $pkg) {
+                // Package names in vendor directories
+                $pkgPath = DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $pkg) . DIRECTORY_SEPARATOR;
+                if (str_contains($f, $pkgPath)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /** @param  non-empty-string  $c */
@@ -316,19 +438,15 @@ final class Composer
      */
     public function findFile(string $ident): ?string
     {
+        // PHP built-ins don't have files - they're external symbols
         $stub = $this->stub($ident);
         if ($stub !== null) {
-            $f = self::join($this->scipPhpVendorDir, 'jetbrains', 'phpstorm-stubs', $stub);
-            $f = realpath($f);
-            if ($f === false) {
-                throw new RuntimeException("Invalid path to stub file: {$stub}.");
-            }
-            return $f;
+            return null;
         }
 
         $f = $this->loader->findFile($ident);
-        if ($f !== false && realpath($f) !== false) {
-            return realpath($f);
+        if ($f !== false && is_file($f)) {
+            return $f;
         }
 
         if (function_exists($ident)) {
@@ -460,22 +578,22 @@ final class Composer
 
         $files = get_included_files();
         foreach ($files as $f) {
-            if ($f === '' || realpath($f) === false) {
+            if ($f === '' || !is_file($f)) {
                 continue;
             }
 
             $content = Reader::read($f);
             if (preg_match($defineConstPattern, $content) === 1) {
-                return realpath($f);
+                return $f;
             }
             if (preg_match($assignConstPattern, $content) !== 1) {
                 continue;
             }
             if ($hasNs && preg_match($nsPattern, $content) === 1) {
-                return realpath($f);
+                return $f;
             }
             if (!$hasNs && preg_match($anyNsPattern, $content) === 0) {
-                return realpath($f);
+                return $f;
             }
         }
         return null;

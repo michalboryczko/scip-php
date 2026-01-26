@@ -3,3 +3,12 @@
 /index.scip
 /tests/Indexer/testdata/actual/
 /vendor/
+build/spc
+build/buildroot/
+build/downloads/
+build/source/
+build/scip-php.phar
+build/scip-php-*
+build/scip-php
+build/tmp/
+build/log/

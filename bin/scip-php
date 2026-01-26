@@ -7,21 +7,56 @@ include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
 use ScipPhp\Indexer;
 
-$options = \getopt('h', ['help', 'memory-limit:']);
+$shortOpts = 'hd:c:o:';
+$longOpts = [
+    'help',
+    'project-dir:',
+    'composer:',
+    'config:',
+    'output:',
+    'memory-limit:',
+];
+
+$options = \getopt($shortOpts, $longOpts);
 if ($options === false) {
     echo "Cannot parse options.\n";
     exit(1);
 }
 
 if (isset($options['h']) || isset($options['help'])) {
-    echo "usage: {$argv[0]} [options]\n\n";
-    echo "scip-php is a SCIP indexer for PHP\n\n";
-    echo "Options:\n";
-    echo "  -h --help               display this help and exit\n";
-    echo "     --memory-limit=\"1G\"  memory limit\n";
+    $script = \basename($argv[0]);
+    echo <<<HELP
+usage: {$script} [options]
+
+scip-php is a SCIP indexer for PHP
+
+Options:
+  -h, --help                   Display this help and exit
+  -d, --project-dir=PATH       Project directory to index (default: current directory)
+  -c, --composer=PATH          Path to composer.json (default: <project-dir>/composer.json)
+      --config=PATH            Path to scip-php.json config (default: <project-dir>/scip-php.json)
+  -o, --output=PATH            Output file path (default: index.scip)
+      --memory-limit=SIZE      Memory limit (default: 1G)
+
+Examples:
+  {$script}                                      Index current directory
+  {$script} -d /path/to/project                  Index specific project
+  {$script} -d /path/to/project -o output.scip   Index and save to custom output file
+  {$script} --composer=/custom/composer.json     Use custom composer.json location
+  {$script} --config=/custom/scip-php.json       Use custom config file
+
+Configuration file (scip-php.json):
+  {
+    "internal_packages": ["symfony/console"],
+    "internal_classes": ["Symfony\\Component\\Console\\Command\\Command"],
+    "internal_methods": ["Symfony\\Component\\Console\\Command\\Command::execute"]
+  }
+
+HELP;
     exit(0);
 }
 
+// Memory limit
 $memoryLimit = $options['memory-limit'] ?? '1G';
 if (!\is_string($memoryLimit)) {
     echo "Invalid memory limit.\n";
@@ -33,14 +68,95 @@ if (\ini_set('memory_limit', $memoryLimit) === false) {
     exit(1);
 }
 
-$projectRoot = \getcwd();
-$version = '0.0.1';
+// Project directory
+$projectDir = $options['d'] ?? $options['project-dir'] ?? \getcwd();
+if (!\is_string($projectDir) || $projectDir === '') {
+    echo "Invalid project directory.\n";
+    exit(1);
+}
+
+// Resolve to absolute path
+if ($projectDir[0] !== '/') {
+    $projectDir = \getcwd() . '/' . $projectDir;
+}
+$projectDir = \realpath($projectDir);
+if ($projectDir === false || !\is_dir($projectDir)) {
+    echo "Project directory does not exist: " . ($options['d'] ?? $options['project-dir'] ?? '.') . "\n";
+    exit(1);
+}
+
+// Composer.json path
+$composerPath = $options['c'] ?? $options['composer'] ?? null;
+if ($composerPath !== null) {
+    if (!\is_string($composerPath) || $composerPath === '') {
+        echo "Invalid composer.json path.\n";
+        exit(1);
+    }
+    // Resolve to absolute path
+    if ($composerPath[0] !== '/') {
+        $composerPath = \getcwd() . '/' . $composerPath;
+    }
+    $composerPath = \realpath($composerPath);
+    if ($composerPath === false || !\is_file($composerPath)) {
+        echo "Composer file does not exist: " . ($options['c'] ?? $options['composer']) . "\n";
+        exit(1);
+    }
+}
+
+// Config file path
+$configPath = $options['config'] ?? null;
+if ($configPath !== null) {
+    if (!\is_string($configPath) || $configPath === '') {
+        echo "Invalid config path.\n";
+        exit(1);
+    }
+    // Resolve to absolute path
+    if ($configPath[0] !== '/') {
+        $configPath = \getcwd() . '/' . $configPath;
+    }
+    $resolved = \realpath($configPath);
+    if ($resolved === false || !\is_file($resolved)) {
+        echo "Config file does not exist: " . $options['config'] . "\n";
+        exit(1);
+    }
+    $configPath = $resolved;
+}
+
+// Output file path
+$outputPath = $options['o'] ?? $options['output'] ?? 'index.scip';
+if (!\is_string($outputPath) || $outputPath === '') {
+    echo "Invalid output path.\n";
+    exit(1);
+}
+
+// Resolve output path (relative to current directory)
+if ($outputPath[0] !== '/') {
+    $outputPath = \getcwd() . '/' . $outputPath;
+}
+
+// Ensure output directory exists
+$outputDir = \dirname($outputPath);
+if (!\is_dir($outputDir)) {
+    if (!\mkdir($outputDir, 0755, true)) {
+        echo "Cannot create output directory: {$outputDir}\n";
+        exit(1);
+    }
+}
+
+$version = '0.2.0';
 $args = \array_splice($argv, 1);
 
-$indexer = new Indexer($projectRoot, $version, $args);
+echo "Indexing project: {$projectDir}\n";
+if ($composerPath !== null) {
+    echo "Using composer.json: {$composerPath}\n";
+}
+if ($configPath !== null) {
+    echo "Using config: {$configPath}\n";
+}
+
+$indexer = new Indexer($projectDir, $version, $args, $composerPath, $configPath);
 $index = $indexer->index();
 
-\file_put_contents(
-    'index.scip',
-    $index->serializeToString(),
-);
+\file_put_contents($outputPath, $index->serializeToString());
+
+echo "Index written to: {$outputPath}\n";

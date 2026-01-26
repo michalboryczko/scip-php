@@ -29,6 +29,7 @@ use ScipPhp\SymbolNamer;
 use ScipPhp\Types\Types;
 
 use function in_array;
+use function str_contains;
 use function str_ends_with;
 
 use const DIRECTORY_SEPARATOR;
@@ -330,6 +331,67 @@ final class TypesTest extends TestCase
 
         self::assertNotNull($d);
         self::assertStringEndsWith($def, $d);
+    }
+
+    public function testGetParentMethodSymbols(): void
+    {
+        // Find class symbols by parsing files and getting their symbols
+        $childClassSymbol = $this->findClassSymbol('OverrideChild');
+        $middleClassSymbol = $this->findClassSymbol('OverrideMiddle');
+
+        self::assertNotNull($childClassSymbol, 'Should find OverrideChild class symbol');
+        self::assertNotNull($middleClassSymbol, 'Should find OverrideMiddle class symbol');
+
+        // Test that OverrideChild::process() overrides OverrideMiddle::process() and OverrideBase::process()
+        $parentMethods = $this->types->getParentMethodSymbols($childClassSymbol, 'process');
+
+        // Should find both OverrideMiddle::process() and OverrideBase::process()
+        self::assertCount(2, $parentMethods);
+
+        $found = [];
+        foreach ($parentMethods as $symbol) {
+            if (str_contains($symbol, 'OverrideMiddle#process')) {
+                $found['middle'] = true;
+            }
+            if (str_contains($symbol, 'OverrideBase#process')) {
+                $found['base'] = true;
+            }
+        }
+
+        self::assertTrue($found['middle'] ?? false, 'Should find OverrideMiddle::process()');
+        self::assertTrue($found['base'] ?? false, 'Should find OverrideBase::process()');
+
+        // Test that OverrideMiddle::process() only overrides OverrideBase::process()
+        $middleParentMethods = $this->types->getParentMethodSymbols($middleClassSymbol, 'process');
+
+        self::assertCount(1, $middleParentMethods);
+        self::assertStringContainsString('OverrideBase#process', $middleParentMethods[0]);
+
+        // Test that a method with no parents returns empty
+        // (nonexistent method name, so no parent defines it)
+        $noParentMethods = $this->types->getParentMethodSymbols($childClassSymbol, 'nonExistentMethod');
+        self::assertCount(0, $noParentMethods);
+    }
+
+    /**
+     * Find a class symbol by its short name by looking through the types' defs.
+     * @return ?non-empty-string
+     */
+    private function findClassSymbol(string $className): ?string
+    {
+        // Access the defs array through reflection to find matching class symbol
+        $reflection = new \ReflectionClass($this->types);
+        $defsProperty = $reflection->getProperty('defs');
+        $defs = $defsProperty->getValue($this->types);
+
+        foreach ($defs as $symbol => $type) {
+            // Match class symbol (ends with ClassName#)
+            if (str_ends_with($symbol, "/{$className}#")) {
+                return $symbol;
+            }
+        }
+
+        return null;
     }
 
     /**
