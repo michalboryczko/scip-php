@@ -244,12 +244,21 @@ final class DocIndexer
             'symbol'        => $symbol,
             'documentation' => $doc,
         ]);
-        $this->occurrences[] = new Occurrence([
+
+        $occurrence = new Occurrence([
             'range'        => $pos->pos($posNode),
             'symbol'       => $symbol,
             'symbol_roles' => SymbolRole::Definition,
             'syntax_kind'  => $kind,
         ]);
+
+        // For ClassLike, ClassMethod, and Function_, set enclosing_range to the full body extent.
+        // This allows downstream tools to determine symbol containment.
+        if ($n instanceof ClassLike || $n instanceof ClassMethod || $n instanceof Function_) {
+            $occurrence->setEnclosingRange($pos->pos($n));
+        }
+
+        $this->occurrences[] = $occurrence;
 
         // Add relationships for class-like definitions
         if ($n instanceof ClassLike) {
@@ -701,7 +710,11 @@ final class DocIndexer
         // Set the scope in Types for type lookup
         $this->types->setCurrentScope($scope);
 
-        // Check if we have a symbol for this variable
+        // Check if this variable is used inside a foreach loop before it's registered.
+        // Due to post-order traversal, loop body is visited before the Foreach_ node.
+        $this->ensureForeachVarRegistered($pos, $n, $varName, $scope);
+
+        // Check if we have a symbol for this variable (local variables shadow parameters)
         $key = $scope . '::$' . $varName;
 
         if (isset($this->localSymbols[$key])) {
@@ -712,7 +725,110 @@ final class DocIndexer
                 'symbol_roles' => SymbolRole::UnspecifiedSymbolRole,
                 'syntax_kind'  => SyntaxKind::IdentifierLocal,
             ]);
+            return;
         }
+
+        // Check if this is a parameter reference
+        $paramSymbol = $scope . '($' . $varName . ')';
+        if (isset($this->symbols[$paramSymbol])) {
+            $this->occurrences[] = new Occurrence([
+                'range'        => $pos->pos($n),
+                'symbol'       => $paramSymbol,
+                'symbol_roles' => SymbolRole::UnspecifiedSymbolRole,
+                'syntax_kind'  => SyntaxKind::IdentifierParameter,
+            ]);
+        }
+    }
+
+    /**
+     * Eagerly register foreach loop variables when referenced in loop body.
+     *
+     * Due to post-order traversal (leaveNode), the loop body is visited BEFORE
+     * the Foreach_ node itself. This means variables used inside the loop body
+     * are encountered before handleForeachVariable() can register them.
+     *
+     * This method checks if the variable is defined by an ancestor Foreach_ node
+     * and registers it early if needed.
+     */
+    private function ensureForeachVarRegistered(PosResolver $pos, Variable $n, string $varName, string $scope): void
+    {
+        // Walk up the AST to find an enclosing Foreach_ that defines this variable
+        $parent = $n->getAttribute('parent');
+        while ($parent !== null) {
+            if ($parent instanceof Foreach_) {
+                // Check if this foreach defines the variable we're looking for
+                if (
+                    $parent->valueVar instanceof Variable
+                    && is_string($parent->valueVar->name)
+                    && $parent->valueVar->name === $varName
+                ) {
+                    $this->registerForeachVar($pos, $parent, $varName, $scope, $parent->valueVar, false);
+                    return;
+                }
+                // Check key variable
+                if (
+                    $parent->keyVar instanceof Variable
+                    && is_string($parent->keyVar->name)
+                    && $parent->keyVar->name === $varName
+                ) {
+                    $this->registerForeachVar($pos, $parent, $varName, $scope, $parent->keyVar, true);
+                    return;
+                }
+            }
+            // Stop at function/method boundary
+            if ($parent instanceof ClassMethod || $parent instanceof Function_) {
+                break;
+            }
+            $parent = $parent->getAttribute('parent');
+        }
+    }
+
+    /**
+     * Register a foreach loop variable as a local symbol.
+     * Called by ensureForeachVarRegistered() for early registration.
+     */
+    private function registerForeachVar(
+        PosResolver $pos,
+        Foreach_ $foreach,
+        string $varName,
+        string $scope,
+        Variable $varNode,
+        bool $isKey
+    ): void {
+        $key = $scope . '::$' . $varName;
+
+        // Already registered - nothing to do
+        if (isset($this->localSymbols[$key])) {
+            return;
+        }
+
+        // Create new local symbol
+        $localSymbol = 'local ' . $this->localCounter++;
+        $this->localSymbols[$key] = $localSymbol;
+
+        // Get type for documentation
+        if ($isKey) {
+            $typeStr = 'int|string';
+        } else {
+            $elementType = $this->types->getForeachElementType($foreach->expr);
+            $typeStr = $elementType !== null ? implode('|', $elementType->flatten()) : 'mixed';
+        }
+
+        $doc = ['```php', '$' . $varName . ': ' . $typeStr, '```'];
+
+        // Register symbol info
+        $this->symbols[$localSymbol] = new SymbolInformation([
+            'symbol'        => $localSymbol,
+            'documentation' => $doc,
+        ]);
+
+        // Emit definition occurrence at the foreach variable position
+        $this->occurrences[] = new Occurrence([
+            'range'        => $pos->pos($varNode),
+            'symbol'       => $localSymbol,
+            'symbol_roles' => SymbolRole::Definition,
+            'syntax_kind'  => SyntaxKind::IdentifierLocal,
+        ]);
     }
 
     /**

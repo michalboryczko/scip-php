@@ -28,5 +28,14 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'davidrjenni/scip-php-test-dep2' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '799e140c065841e44b29351a444c6f8579aa5350',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../davidrjenni/scip-php-test-dep2',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
     ),
 );

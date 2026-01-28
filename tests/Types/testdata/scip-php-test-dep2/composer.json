@@ -1,0 +1,10 @@
+{
+    "name": "davidrjenni/scip-php-test-dep2",
+    "description": "A second test dependency",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Test\\Dep2\\": "src"
+        }
+    }
+}

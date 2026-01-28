@@ -69,6 +69,9 @@ final class Composer
 
     private readonly ClassLoader $loader;
 
+    /** @var ?ClassLoader Project's ClassLoader, used only for findFile() lookups, NOT registered for autoloading */
+    private readonly ?ClassLoader $projectLoader;
+
     /** @var array<non-empty-string, array{name: non-empty-string, version: non-empty-string}> */
     private array $pkgsByPaths;
 
@@ -95,6 +98,32 @@ final class Composer
     private static function join(string $elem, string ...$elems): string
     {
         return implode(DIRECTORY_SEPARATOR, [$elem, ...$elems]);
+    }
+
+    /**
+     * Normalize a path to resolve .. and . without resolving symlinks.
+     * @param  non-empty-string  $path
+     * @return non-empty-string
+     */
+    private static function normalizePath(string $path): string
+    {
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        $normalized = [];
+
+        foreach ($parts as $part) {
+            if ($part === '..' && !empty($normalized) && $normalized[count($normalized) - 1] !== '..') {
+                array_pop($normalized);
+            } elseif ($part !== '' && $part !== '.') {
+                $normalized[] = $part;
+            }
+        }
+
+        $result = implode(DIRECTORY_SEPARATOR, $normalized);
+        if (str_starts_with($path, DIRECTORY_SEPARATOR) && !str_starts_with($result, DIRECTORY_SEPARATOR)) {
+            $result = DIRECTORY_SEPARATOR . $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -154,8 +183,20 @@ final class Composer
         $this->vendorDir = self::join($projectRoot, $vendorDir);
 
         // Always use scip-php's bundled vendor for runtime autoloading
-        // Target project's vendor is only scanned for indexing, never loaded
         $this->loader = require self::join($this->scipPhpVendorDir, 'autoload.php');
+
+        // Load the project's ClassLoader for file lookups only.
+        // Immediately unregister it so it never interferes with runtime class loading.
+        $projectVendorAutoload = self::join($this->vendorDir, 'autoload.php');
+        $projectLoader = null;
+        if (is_file($projectVendorAutoload)) {
+            $loader = require $projectVendorAutoload; // @phpstan-ignore-line
+            if ($loader instanceof ClassLoader) {
+                $loader->unregister();
+                $projectLoader = $loader;
+            }
+        }
+        $this->projectLoader = $projectLoader;
 
         $installed = require self::join($this->vendorDir, 'composer', 'installed.php');
         $this->pkgName = $installed['root']['name'];
@@ -184,12 +225,20 @@ final class Composer
                 throw new RuntimeException("Invalid install path of package {$name}: {$info['install_path']}.");
             }
             if ($name !== $this->pkgName) {
-                $pkgsByPaths[$path] = ['name' => $name, 'version' => $info['reference']];
+                $normalizedPath = self::normalizePath($path);
+                $pkgsByPaths[$normalizedPath] = ['name' => $name, 'version' => $info['reference']];
+                if ($normalizedPath !== $path) {
+                    $pkgsByPaths[$path] = ['name' => $name, 'version' => $info['reference']];
+                }
             }
         }
 
         $composerPath = self::join($this->vendorDir, 'composer');
-        $pkgsByPaths[$composerPath] = ['name' => 'composer', 'version' => 'dev'];
+        $normalizedComposerPath = self::normalizePath($composerPath);
+        $pkgsByPaths[$normalizedComposerPath] = ['name' => 'composer', 'version' => 'dev'];
+        if ($normalizedComposerPath !== $composerPath) {
+            $pkgsByPaths[$composerPath] = ['name' => 'composer', 'version' => 'dev'];
+        }
         $this->pkgsByPaths = $pkgsByPaths;
 
         // Load composer.lock from the same directory as composer.json
@@ -222,6 +271,18 @@ final class Composer
             }
         }
         $this->loader->addClassMap($additionalClasses);
+
+        // Load project's autoload.files to define constants and functions
+        if (is_array($autoload['files'] ?? null)) {
+            foreach ($autoload['files'] as $f) {
+                if (is_string($f) && $f !== '') {
+                    $filePath = self::join($projectRoot, $f);
+                    if (is_file($filePath)) {
+                        require_once $filePath; // @phpstan-ignore-line
+                    }
+                }
+            }
+        }
 
         $this->userConsts = get_defined_constants(categorize: true)['user'] ?? []; // @phpstan-ignore-line
 
@@ -419,7 +480,7 @@ final class Composer
                 // also returns the path to the file of a namespaced function, check that the identifier is not a
                 // function. However, since it is possible that a class-like and a function have the same name, we
                 // must call {class,interface,trait,enum}_exists as a last resort.
-                $this->loader->findFile($c) !== false && (
+                ($this->loader->findFile($c) !== false || ($this->projectLoader !== null && $this->projectLoader->findFile($c) !== false)) && (
                     !function_exists($c)
                     || class_exists($c) || interface_exists($c) || trait_exists($c) || enum_exists($c)
                 )
@@ -438,15 +499,35 @@ final class Composer
      */
     public function findFile(string $ident): ?string
     {
-        // PHP built-ins don't have files - they're external symbols
+        // PHP built-ins are in the phpstorm-stubs files
         $stub = $this->stub($ident);
         if ($stub !== null) {
+            $stubsPath = self::join($this->scipPhpVendorDir, 'jetbrains', 'phpstorm-stubs', $stub);
+            if (is_file($stubsPath)) {
+                return $stubsPath;
+            }
             return null;
         }
 
         $f = $this->loader->findFile($ident);
         if ($f !== false && is_file($f)) {
+            // If found in scip-php's vendor, check if the project has it too
+            // (e.g., a shared dependency). Prefer the project's copy for indexing.
+            if (str_contains($f, $this->scipPhpVendorDir) && $this->projectLoader !== null) {
+                $pf = $this->projectLoader->findFile($ident);
+                if ($pf !== false && is_file($pf)) {
+                    return $pf;
+                }
+            }
             return $f;
+        }
+
+        // Fallback to project loader for classes only in the project's vendor
+        if ($this->projectLoader !== null) {
+            $f = $this->projectLoader->findFile($ident);
+            if ($f !== false && is_file($f)) {
+                return $f;
+            }
         }
 
         if (function_exists($ident)) {
@@ -505,7 +586,8 @@ final class Composer
             return null;
         }
         foreach ($this->pkgsByPaths as $path => $info) {
-            if (str_starts_with($f, $path)) {
+            $pathNormalized = rtrim($path, DIRECTORY_SEPARATOR);
+            if (str_starts_with($f, $pathNormalized . DIRECTORY_SEPARATOR)) {
                 return $info;
             }
         }

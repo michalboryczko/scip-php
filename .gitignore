@@ -12,3 +12,7 @@ build/scip-php-*
 build/scip-php
 build/tmp/
 build/log/
+
+# IDE and tool files
+.idea/
+.claude/

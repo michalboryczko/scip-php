@@ -444,7 +444,13 @@ final class Types
             $this->parser->traverse($f, $this, $this->collectDefs(...));
             $this->seenDepFiles[$f] = true;
 
-            // After loading, check if we can now resolve via uppers (inheritance chain)
+            // After loading, first check if the symbol is now directly available
+            $c = $name($t);
+            if (array_key_exists($c, $this->defs)) {
+                return $c;
+            }
+
+            // Then check if we can resolve via uppers (inheritance chain)
             $uppers = $this->uppers[$t] ?? [];
             if (!empty($uppers)) {
                 // Recursively try to find def in parent classes

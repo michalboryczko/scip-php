@@ -7,27 +7,33 @@
       use Exception;
 //        ^^^^^^^^^ reference scip-php composer php 8.4.15 Exception#
   
+//    ⌄ enclosing_range_start scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#
       final class ClassH extends Exception
 //                ^^^^^^ definition scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#
 //                documentation
 //                > ```php
 //                > final class ClassH extends Exception
 //                > ```
+//                relationship scip-php composer php 8.4.15 Exception# reference
 //                               ^^^^^^^^^ reference scip-php composer php 8.4.15 Exception#
       {
   
+//        ⌄ enclosing_range_start scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#__construct().
           public function __construct()
 //                        ^^^^^^^^^^^ definition scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#__construct().
 //                        documentation
 //                        > ```php
 //                        > public function __construct()
 //                        > ```
+//                        relationship scip-php composer php 8.4.15 Exception#__construct(). implementation reference
           {
               parent::__construct();
 //            ^^^^^^ reference scip-php composer php 8.4.15 Exception#
 //                    ^^^^^^^^^^^ reference scip-php composer php 8.4.15 Exception#__construct().
           }
+//        ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#__construct().
   
+//        ⌄ enclosing_range_start scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().
           public function h1(): int
 //                        ^^ definition scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().
 //                        documentation
@@ -36,6 +42,13 @@
 //                        > ```
           {
               $x = \TestData4\fun2()->f2()->a2();
+//            ^^ definition local 0
+//            documentation
+//            > ```php
+//            documentation
+//            > $x: mixed
+//            documentation
+//            > ```
 //                 ^^^^^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData4/fun2().
 //                                    ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f2().
 //                                          ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().
@@ -43,14 +56,18 @@
 //                          ^^^^^^^ reference scip-php composer php 8.4.15 Exception#getCode().
 //                                      ^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 fun2().
 //                                              ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().
+//                                                     ^^ reference local 0
           }
+//        ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().
       }
+//    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#
   }
   
   // https://www.php.net/manual/en/language.namespaces.definitionmultiple.php
   
   namespace TestData2
   {
+//    ⌄ enclosing_range_start scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData2/ClassJ#
       final class ClassJ
 //                ^^^^^^ definition scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData2/ClassJ#
 //                documentation
@@ -65,10 +82,12 @@
 //                     > public J2 = 42
 //                     > ```
       }
+//    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData2/ClassJ#
   }
   
   namespace
   {
+//    ⌄ enclosing_range_start scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 ClassJ#
       final class ClassJ
 //                ^^^^^^ definition scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 ClassJ#
 //                documentation
@@ -83,5 +102,6 @@
 //                     > public J3 = 42
 //                     > ```
       }
+//    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 ClassJ#
   }
   
