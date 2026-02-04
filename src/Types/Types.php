@@ -10,9 +10,9 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Clone_;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
@@ -50,6 +50,7 @@ use ScipPhp\Types\Internal\TypeParser;
 use ScipPhp\Types\Internal\UniformIterableType;
 
 use function array_key_exists;
+use function count;
 use function in_array;
 use function is_string;
 use function ltrim;
@@ -71,6 +72,9 @@ final class Types
 
     /** @var array<non-empty-string, true> */
     private array $seenDepFiles;
+
+    /** @var array<string, list<string>> Maps callee symbol to ordered parameter names */
+    private array $methodParams = [];
 
     /** @var array<string, array<string, Type>> scope -> varName -> Type */
     private array $localVars = [];
@@ -230,7 +234,7 @@ final class Types
             $first = $callback->items[0]?->value;
             $second = $callback->items[1]?->value;
 
-            if ($second instanceof \PhpParser\Node\Scalar\String_) {
+            if ($second instanceof String_) {
                 $methodName = $second->value;
                 $classType = $this->type($first);
                 if ($classType !== null) {
@@ -266,7 +270,10 @@ final class Types
         if ($x instanceof BinaryOp && $x->getOperatorSigil() === '??') {
             $leftType = $this->type($x->left);
             $rightType = $this->type($x->right);
-            return new CompositeType($leftType, $rightType);
+            // For coalesce, remove null from left type, then union with right
+            // If left is Foo|null and right is Bar, result is Foo|Bar
+            $leftWithoutNull = CompositeType::removeNull($leftType);
+            return CompositeType::union($leftWithoutNull, $rightType);
         }
 
         if ($x instanceof Clone_) {
@@ -311,7 +318,7 @@ final class Types
             foreach ($x->arms as $a) {
                 $types[] = $this->type($a->body);
             }
-            return new CompositeType(...$types);
+            return CompositeType::union(...$types);
         }
 
         if (
@@ -367,10 +374,10 @@ final class Types
             $elseType = $this->type($x->else);
             if ($x->if !== null) {
                 $ifType = $this->type($x->if);
-                return new CompositeType($ifType, $elseType);
+                return CompositeType::union($ifType, $elseType);
             }
             $condType = $this->type($x->cond);
-            return new CompositeType($condType, $elseType);
+            return CompositeType::union($condType, $elseType);
         }
 
         if ($x instanceof Variable) {
@@ -474,6 +481,7 @@ final class Types
 
     /**
      * Set the current scope for local variable tracking.
+     *
      * @param ?string $scope The method/function symbol, or null to clear
      */
     public function setCurrentScope(?string $scope): void
@@ -494,6 +502,7 @@ final class Types
 
     /**
      * Register a local variable with its type.
+     *
      * @param string $varName The variable name (without $)
      * @param Expr $expr The expression assigned to the variable
      * @return ?Type The resolved type, or null if unknown
@@ -513,6 +522,7 @@ final class Types
     /**
      * Register a local variable with a pre-computed type.
      * Used for foreach loop variables where the type is derived from the iterable.
+     *
      * @param string $varName The variable name (without $)
      * @param ?Type $type The type to register, or null if unknown
      */
@@ -526,6 +536,7 @@ final class Types
 
     /**
      * Get the type of a local variable.
+     *
      * @param string $varName The variable name (without $)
      * @return ?Type The type, or null if unknown
      */
@@ -538,14 +549,62 @@ final class Types
     }
 
     /**
+     * Get the return type of a method/function by its symbol.
+     *
+     * @param  string  $symbol  The callee SCIP symbol
+     * @return ?Type   The return type, or null if unknown
+     */
+    public function getReturnType(string $symbol): ?Type
+    {
+        return $this->defs[$symbol] ?? null;
+    }
+
+    /**
+     * Get the type of an expression.
+     *
+     * @param  Expr|Name  $expr  The expression to type
+     * @return ?Type      The type, or null if unknown
+     */
+    public function getExprType(Node $expr): ?Type
+    {
+        if ($expr instanceof Expr || $expr instanceof Name) {
+            return $this->type($expr);
+        }
+        return null;
+    }
+
+    /**
      * Clear local variables for a scope.
      */
     public function clearScope(?string $scope = null): void
     {
-        $scope = $scope ?? $this->currentScope;
+        $scope ??= $this->currentScope;
         if ($scope !== null) {
             unset($this->localVars[$scope]);
         }
+    }
+
+    /**
+     * Get ordered parameter names for a callee symbol.
+     *
+     * @param  string  $symbol  The callee SCIP symbol
+     * @return ?list<string>    Ordered parameter names, or null if unavailable
+     */
+    public function getMethodParams(string $symbol): ?array
+    {
+        return $this->methodParams[$symbol] ?? null;
+    }
+
+    /**
+     * Parse a type node into a Type object.
+     * Public wrapper for TypeParser::parse() to allow DocIndexer to parse parameter types.
+     *
+     * @param  Node|null  $typeNode  The type node (Name, Identifier, NullableType, UnionType, etc.)
+     * @return ?Type      The parsed type, or null if unparseable
+     */
+    public function parseType(?Node $typeNode): ?Type
+    {
+        return $this->typeParser->parse($typeNode);
     }
 
     private function collectDefs(PosResolver $pos, Node $n): void // phpcs:ignore
@@ -577,15 +636,31 @@ final class Types
                     $type = $this->typeParser->parseDoc($n, $t);
                 }
                 $this->defs[$name] = $type;
+
+                // Collect parameter names for call tracking
+                $paramNames = [];
+                foreach ($n->getParams() as $param) {
+                    if ($param->var instanceof Variable && is_string($param->var->name)) {
+                        $paramNames[] = $param->var->name;
+                    }
+                }
+                if ($paramNames !== []) {
+                    $this->methodParams[$name] = $paramNames;
+                }
             }
         } elseif ($n instanceof Param && $n->var instanceof Variable && is_string($n->var->name)) {
             // Constructor property promotion.
             if ($n->flags !== 0) {
-                $p = new PropertyItem($n->var->name, $n->default, $n->getAttributes());
-                $name = $this->namer->name($p);
-                if ($name !== null) {
-                    $type = $this->typeParser->parse($n->type);
-                    $this->defs[$name] = $type;
+                // Get class symbol from context by walking up the parent chain
+                $parent = $n->getAttribute('parent');  // ClassMethod __construct
+                $classLike = $parent?->getAttribute('parent');  // ClassLike
+                if ($classLike instanceof ClassLike) {
+                    $classSymbol = $this->namer->name($classLike);
+                    if ($classSymbol !== null) {
+                        $propSymbol = $this->namer->nameProp($classSymbol, $n->var->name);
+                        $type = $this->typeParser->parse($n->type);
+                        $this->defs[$propSymbol] = $type;
+                    }
                 }
             }
         } elseif ($n instanceof Property) {

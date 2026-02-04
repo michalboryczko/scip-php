@@ -19,4 +19,20 @@ final readonly class NamedType implements Type
     {
         return [$this->name];
     }
+
+    #[Override]
+    public function isComposite(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get the symbol name.
+     *
+     * @return non-empty-string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

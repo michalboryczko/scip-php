@@ -131,7 +131,7 @@
 //               documentation
 //               > ```php
 //               documentation
-//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#
+//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#|null
 //               documentation
 //               > ```
 //                            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -178,7 +178,7 @@
 //               documentation
 //               > ```php
 //               documentation
-//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#
+//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#|null
 //               documentation
 //               > ```
 //                            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -308,7 +308,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v6: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#
+//        > $v6: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#|null
 //        documentation
 //        > ```
 //               ^^^ reference local 10

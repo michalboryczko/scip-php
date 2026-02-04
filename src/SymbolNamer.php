@@ -26,10 +26,15 @@ use ScipPhp\Composer\Composer;
 
 use function count;
 use function explode;
+use function implode;
 use function is_string;
 use function rtrim;
+use function sort;
 use function str_replace;
+use function str_starts_with;
 use function strpos;
+use function strrpos;
+use function strtolower;
 use function substr;
 
 final readonly class SymbolNamer
@@ -38,8 +43,210 @@ final readonly class SymbolNamer
 
     private const string MANAGER = 'composer';
 
+    /**
+     * Prefix for built-in type symbols.
+     * Format: scip-php php builtin . <type>#
+     * This follows the SCIP format: scheme manager package version descriptor
+     * where '.' is the version placeholder (empty version).
+     */
+    private const string SCHEME_BUILTIN = 'scip-php php builtin . ';
+
+    /**
+     * Prefix for operator symbols.
+     * Format: scip-php operator . <operator>#
+     * Used for coalesce, elvis, ternary, match operators.
+     */
+    private const string SCHEME_OPERATOR = 'scip-php operator . ';
+
+    /**
+     * Mapping of operator names to their canonical symbol names.
+     */
+    private const array OPERATOR_NAMES = [
+        'coalesce' => 'coalesce',    // ?? operator
+        'elvis'    => 'elvis',       // ?: operator (short ternary)
+        'ternary'  => 'ternary',     // ? : operator (full ternary)
+        'match'    => 'match',       // match expression
+    ];
+
+    /**
+     * Mapping of PHP built-in type names to their canonical symbol names.
+     * These are global symbols with no source-level definition.
+     */
+    private const array BUILTIN_TYPES = [
+        'null'   => 'null',
+        'string' => 'string',
+        'int'    => 'int',
+        'integer' => 'int',  // Alias
+        'float'  => 'float',
+        'double' => 'float', // Alias
+        'bool'   => 'bool',
+        'boolean' => 'bool', // Alias
+        'array'  => 'array',
+        'void'   => 'void',
+        'never'  => 'never',
+        'mixed'  => 'mixed',
+        'true'   => 'true',
+        'false'  => 'false',
+        'object' => 'object',
+        'iterable' => 'iterable',
+        'callable' => 'callable',
+        'resource' => 'resource',
+    ];
+
     public function __construct(private Composer $composer)
     {
+    }
+
+    /**
+     * Returns the symbol for a PHP built-in type.
+     *
+     * @param  string  $type  The built-in type name (e.g., 'null', 'string', 'int')
+     * @return ?non-empty-string  The symbol (e.g., 'scip-php builtin . null#'), or null if not a built-in
+     */
+    public function nameBuiltin(string $type): ?string
+    {
+        $canonical = self::BUILTIN_TYPES[strtolower($type)] ?? null;
+        if ($canonical === null) {
+            return null;
+        }
+        return self::SCHEME_BUILTIN . $canonical . '#';
+    }
+
+    /**
+     * Check if a type name is a built-in type.
+     *
+     * @param  string  $type  The type name to check
+     */
+    public function isBuiltinType(string $type): bool
+    {
+        return isset(self::BUILTIN_TYPES[strtolower($type)]);
+    }
+
+    /**
+     * Returns the symbol for a PHP operator.
+     *
+     * @param  string  $operator  The operator name (e.g., 'coalesce', 'elvis', 'ternary', 'match')
+     * @return ?non-empty-string  The symbol (e.g., 'scip-php operator . coalesce#'), or null if not a known operator
+     */
+    public function nameOperator(string $operator): ?string
+    {
+        $canonical = self::OPERATOR_NAMES[strtolower($operator)] ?? null;
+        if ($canonical === null) {
+            return null;
+        }
+        return self::SCHEME_OPERATOR . $canonical . '#';
+    }
+
+    /**
+     * Creates a synthetic union type symbol from constituent types.
+     *
+     * The types are sorted alphabetically to ensure a canonical symbol
+     * regardless of declaration order. Built-in types are normalized to their
+     * short names (e.g., 'null' not 'scip-php builtin . null#').
+     *
+     * Format: scip-php union . Foo|Bar|null#
+     *
+     * @param  list<non-empty-string>  $types  Constituent type short names (sorted alphabetically)
+     * @return non-empty-string  The synthetic union symbol
+     */
+    public function nameUnion(array $types): string
+    {
+        $shortNames = [];
+        foreach ($types as $type) {
+            $shortNames[] = $this->extractShortTypeName($type);
+        }
+        sort($shortNames);
+        $typeList = implode('|', $shortNames);
+        // Format: scip-php synthetic union . Foo|Bar|null#
+        // (scheme manager package version descriptor)
+        return 'scip-php synthetic union . ' . $typeList . '#';
+    }
+
+    /**
+     * Creates a synthetic intersection type symbol from constituent types.
+     *
+     * The types are sorted alphabetically to ensure a canonical symbol
+     * regardless of declaration order.
+     *
+     * Format: scip-php synthetic intersection . Countable&Serializable#
+     *
+     * @param  list<non-empty-string>  $types  Constituent type symbols
+     * @return non-empty-string  The synthetic intersection symbol
+     */
+    public function nameIntersection(array $types): string
+    {
+        $shortNames = [];
+        foreach ($types as $type) {
+            $shortNames[] = $this->extractShortTypeName($type);
+        }
+        sort($shortNames);
+        $typeList = implode('&', $shortNames);
+        // Format: scip-php synthetic intersection . Countable&Serializable#
+        // (scheme manager package version descriptor)
+        return 'scip-php synthetic intersection . ' . $typeList . '#';
+    }
+
+    /**
+     * Extract the short type name from a full SCIP symbol or type name.
+     *
+     * Examples:
+     * - 'scip-php composer foo/bar 1.0.0 App/User#' -> 'User'
+     * - 'scip-php php builtin . null#' -> 'null'
+     * - 'User' -> 'User'
+     * - 'App\User' -> 'User'
+     *
+     * @param  non-empty-string  $type
+     * @return non-empty-string
+     */
+    public function extractShortTypeName(string $type): string
+    {
+        // Handle builtin types: scip-php php builtin . null#
+        if (str_starts_with($type, 'scip-php php builtin . ')) {
+            $name = substr($type, 23); // After 'scip-php php builtin . '
+            return rtrim($name, '#');
+        }
+
+        // Handle composer symbols: scip-php composer pkg ver Namespace/Class#
+        if (str_starts_with($type, 'scip-php composer ')) {
+            $parts = explode(' ', $type);
+            if (count($parts) >= 5) {
+                $desc = $parts[4];
+                $desc = rtrim($desc, '#');
+                // Extract last part after / (the class name)
+                $slashPos = strrpos($desc, '/');
+                if ($slashPos !== false) {
+                    return substr($desc, $slashPos + 1);
+                }
+                return $desc;
+            }
+        }
+
+        // Handle union types: scip-php synthetic union . Foo|Bar#
+        if (str_starts_with($type, 'scip-php synthetic union . ')) {
+            $name = substr($type, 27); // After 'scip-php synthetic union . '
+            return rtrim($name, '#');
+        }
+
+        // Handle intersection types: scip-php synthetic intersection . Foo&Bar#
+        if (str_starts_with($type, 'scip-php synthetic intersection . ')) {
+            $name = substr($type, 34); // After 'scip-php synthetic intersection . '
+            return rtrim($name, '#');
+        }
+
+        // Handle operator symbols: scip-php operator . coalesce#
+        if (str_starts_with($type, 'scip-php operator . ')) {
+            $name = substr($type, 20); // After 'scip-php operator . '
+            return rtrim($name, '#');
+        }
+
+        // Handle plain type names (with backslash namespace)
+        $backslashPos = strrpos($type, '\\');
+        if ($backslashPos !== false) {
+            return substr($type, $backslashPos + 1);
+        }
+
+        // Already a short name
+        return $type;
     }
 
     /**
@@ -98,6 +305,23 @@ final readonly class SymbolNamer
     public function nameParam(string $symbol, string $param): string
     {
         return "{$symbol}(\${$param})";
+    }
+
+    /**
+     * Generate a local variable symbol with scope and line.
+     * Format: {scope}.local${name}@{line}
+     *
+     * Each assignment to a local variable gets a unique symbol based on its line number.
+     * This enables tracking variable reassignments and their values separately.
+     *
+     * @param  non-empty-string  $scope    The enclosing scope symbol (method/function)
+     * @param  non-empty-string  $varName  The variable name (without $)
+     * @param  int               $line     The line number of the assignment (1-based)
+     * @return non-empty-string  The local variable symbol
+     */
+    public function nameLocalVar(string $scope, string $varName, int $line): string
+    {
+        return $scope . 'local$' . $varName . '@' . $line;
     }
 
     /**

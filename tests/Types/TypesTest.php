@@ -23,6 +23,7 @@ use PhpParser\NodeVisitor\ParentConnectingVisitor;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ScipPhp\Composer\Composer;
 use ScipPhp\File\Reader;
 use ScipPhp\SymbolNamer;
@@ -375,12 +376,13 @@ final class TypesTest extends TestCase
 
     /**
      * Find a class symbol by its short name by looking through the types' defs.
+     *
      * @return ?non-empty-string
      */
     private function findClassSymbol(string $className): ?string
     {
         // Access the defs array through reflection to find matching class symbol
-        $reflection = new \ReflectionClass($this->types);
+        $reflection = new ReflectionClass($this->types);
         $defsProperty = $reflection->getProperty('defs');
         $defs = $defsProperty->getValue($this->types);
 

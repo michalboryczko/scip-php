@@ -20,6 +20,12 @@ final readonly class UniformIterableType implements IterableType
     }
 
     #[Override]
+    public function isComposite(): bool
+    {
+        return false;
+    }
+
+    #[Override]
     public function valueType(int|string|null $key): ?Type // phpcs:ignore
     {
         return $this->type;
