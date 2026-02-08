@@ -1,13 +1,12 @@
 # scip-php
 
-PHP code indexer that generates SCIP indexes and **calls.json** for data flow analysis.
+PHP code indexer that generates SCIP indexes and **unified JSON** output for data flow analysis.
 
 
 ## Features
 
 - **SCIP Index** (`index.scip`) - Standard SCIP format for code navigation
-- **Calls Tracking** (`calls.json`) - Detailed call sites, receivers, arguments, and data flow
-- **KLOC Archive** (`index.kloc`) - Bundled ZIP containing both outputs
+- **Unified JSON** (`index.json`) - Combined SCIP index + call sites + values + data flow in one file (version 4.0)
 
 ## Installation
 
@@ -38,8 +37,7 @@ composer require --dev kloc/scip-php
 | File | Description |
 |------|-------------|
 | `index.scip` | Standard SCIP protobuf index |
-| `calls.json` | Call sites, values, and data flow tracking |
-| `index.kloc` | ZIP archive containing both files |
+| `index.json` | Unified JSON output (SCIP + calls + values, version 4.0) |
 
 ### Options
 
@@ -52,19 +50,25 @@ composer require --dev kloc/scip-php
     --memory-limit=SIZE   Memory limit (default: 1G)
 ```
 
-## Calls.json Format
+## Unified JSON Format (version 4.0)
 
-The `calls.json` file tracks values and calls for data flow analysis:
+The `index.json` file contains all indexer output in a single file:
 
 ```json
 {
-  "version": "3.2",
-  "values": [
-    {"id": "file:line:col", "kind": "parameter", "symbol": "...", "type": "..."}
-  ],
-  "calls": [
-    {"id": "file:line:col", "kind": "method", "callee": "...", "receiver_value_id": "..."}
-  ]
+  "version": "4.0",
+  "scip": {
+    "metadata": { ... },
+    "documents": [ ... ]
+  },
+  "calls": {
+    "values": [
+      {"id": "file:line:col", "kind": "parameter", "symbol": "...", "type": "..."}
+    ],
+    "calls": [
+      {"id": "file:line:col", "kind": "method", "callee": "...", "receiver_value_id": "..."}
+    ]
+  }
 }
 ```
 
@@ -96,7 +100,7 @@ Optional `scip-php.json` to treat external packages as internal (full indexing):
 ```
 
 ## Fork Improvements
-> **Note**: This is a fork of [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php) with significant extensions for call tracking and data flow analysis. While it still produces standard SCIP indexes compatible with Sourcegraph, the primary focus is on generating `calls.json` for the [kloc](https://github.com/kloc-dev/kloc) code analysis toolkit.
+> **Note**: This is a fork of [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php) with significant extensions for call tracking and data flow analysis. While it still produces standard SCIP indexes compatible with Sourcegraph, the primary focus is on generating unified JSON output for the [kloc](https://github.com/kloc-dev/kloc) code analysis toolkit.
 
 Beyond the original scip-php:
 
@@ -104,6 +108,7 @@ Beyond the original scip-php:
 - **Value tracking** - Parameters, locals, results with type info
 - **Chain reconstruction** - Follow `receiver_value_id` through call chains
 - **Argument binding** - Track which values are passed to which parameters
+- **Unified JSON output** - Single file containing SCIP index + calls + values
 - Standalone CLI with Docker support
 - Method override relationships (bidirectional)
 - Extends vs implements distinction

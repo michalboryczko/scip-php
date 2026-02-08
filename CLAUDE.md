@@ -22,7 +22,7 @@ This runs scip-php in Docker with:
 - `/path/to/project` mounted as `/input` (read-only)
 - `/path/to/output` mounted as `/output`
 
-Output files: `index.scip`, `calls.json`, `index.kloc`
+Output files: `index.scip`, `index.json` (unified JSON with SCIP + calls + values, version 4.0)
 
 ### Call Kinds
 
@@ -38,7 +38,7 @@ Reference documentation for output format and expected behavior:
 
 | Document | Description |
 |----------|-------------|
-| [`docs/reference/kloc-scip/calls-schema.json`](../docs/reference/kloc-scip/calls-schema.json) | JSON Schema for calls.json - authoritative spec |
+| [`docs/reference/kloc-scip/calls-schema.json`](../docs/reference/kloc-scip/calls-schema.json) | JSON Schema for calls data - authoritative spec |
 | [`docs/reference/kloc-scip/calls-and-data-flow.md`](../docs/reference/kloc-scip/calls-and-data-flow.md) | Detailed explanation with examples |
 | [`docs/reference/kloc-scip/calls-schema-docs.md`](../docs/reference/kloc-scip/calls-schema-docs.md) | Quick reference for schema fields |
 | [`docs/specs/scip-php-missing-features.md`](../docs/specs/scip-php-missing-features.md) | Features to implement (from contract tests) |
