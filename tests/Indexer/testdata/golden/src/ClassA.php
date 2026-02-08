@@ -41,7 +41,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v1: mixed
+//        > $v1: int
 //        documentation
 //        > ```
 //                     ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -53,7 +53,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v2: mixed
+//        > $v2: int
 //        documentation
 //        > ```
 //                     ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -64,7 +64,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v3: mixed
+//        > $v3: int
 //        documentation
 //        > ```
 //                     ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -96,7 +96,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v1: mixed
+//        > $v1: int|null
 //        documentation
 //        > ```
 //                     ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().
@@ -124,14 +124,14 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v2: mixed
+//        > $v2: int
 //        documentation
 //        > ```
 //               ^^^ definition local 4
 //               documentation
 //               > ```php
 //               documentation
-//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#
+//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#|null
 //               documentation
 //               > ```
 //                            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -178,7 +178,7 @@
 //               documentation
 //               > ```php
 //               documentation
-//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#
+//               > $v3: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#|null
 //               documentation
 //               > ```
 //                            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -213,7 +213,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v1: mixed
+//        > $v1: int|null
 //        documentation
 //        > ```
 //                     ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().
@@ -222,7 +222,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $v2: mixed
+//        > $v2: string
 //        documentation
 //        > ```
 //               ^^^ reference local 10
@@ -246,24 +246,24 @@
 //                                                                  ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassD#$d1.
 //                                                                        ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#c1().
           $v3 = ClassF::f2()->a1();
-//        ^^^ reference local 12
+//        ^^^ reference local 13
 //              ^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#
 //                      ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f2().
 //                            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().
           $v3 = (new ClassF())::f2()->a1();
-//        ^^^ reference local 12
+//        ^^^ reference local 14
 //                   ^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#
 //                              ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f2().
 //                                    ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().
           $v4 = (new class($v3) {
-//        ^^^ definition local 13
+//        ^^^ definition local 15
 //        documentation
 //        > ```php
 //        documentation
-//        > $v4: mixed
+//        > $v4: int
 //        documentation
 //        > ```
-//                         ^^^ reference local 12
+//                         ^^^ reference local 14
               public int $z1;
 //                       ^^^ definition scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/anon-class-447#$z1.
 //                       documentation
@@ -288,49 +288,49 @@
           })->z1;
 //            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/anon-class-447#$z1.
           $v5 = (new class($v3) extends ClassF {})->f1;
-//        ^^^ definition local 14
+//        ^^^ definition local 16
 //        documentation
 //        > ```php
 //        documentation
-//        > $v5: mixed
+//        > $v5: int
 //        documentation
 //        > ```
-//                         ^^^ reference local 12
+//                         ^^^ reference local 14
 //                                      ^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#
 //                                                  ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#$f1.
           $v5 = (clone (new class($v3) extends ClassF {}))->f1;
-//        ^^^ reference local 14
-//                                ^^^ reference local 12
+//        ^^^ reference local 17
+//                                ^^^ reference local 14
 //                                             ^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#
 //                                                          ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#$f1.
           $v6 = ($v1 ?? $this->a1)?->b1;
-//        ^^^ definition local 15
+//        ^^^ definition local 18
 //        documentation
 //        > ```php
 //        documentation
-//        > $v6: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#
+//        > $v6: scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#|null
 //        documentation
 //        > ```
 //               ^^^ reference local 10
 //                             ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
 //                                   ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b1.
           $v6 = ($this->a1 ?? $v1)?->b1;
-//        ^^^ reference local 15
+//        ^^^ reference local 19
 //                      ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
 //                            ^^^ reference local 10
 //                                   ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b1.
           $v6 = ($this->a1 ?? $this->a1?->b1)?->c1;
-//        ^^^ reference local 15
+//        ^^^ reference local 20
 //                      ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
 //                                   ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
 //                                        ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b1.
 //                                              ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#$c1.
           $v7 = (match($v1) {
-//        ^^^ definition local 16
+//        ^^^ definition local 21
 //        documentation
 //        > ```php
 //        documentation
-//        > $v7: mixed
+//        > $v7: string
 //        documentation
 //        > ```
 //                     ^^^ reference local 10
@@ -342,7 +342,7 @@
           })->c1;
 //            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#$c1.
           $v7 = (match($v1) {
-//        ^^^ reference local 16
+//        ^^^ reference local 22
 //                     ^^^ reference local 10
               1 => $this->a1,
 //                        ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.
@@ -353,11 +353,11 @@
           })->b2;
 //            ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b2.
           $v8 = ($this->a1->b1 ?: $this->a1)?->c1;
-//        ^^^ definition local 17
+//        ^^^ definition local 23
 //        documentation
 //        > ```php
 //        documentation
-//        > $v8: mixed
+//        > $v8: string
 //        documentation
 //        > ```
 //                      ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.

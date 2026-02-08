@@ -8,13 +8,16 @@ use Composer\Autoload\ClassLoader;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\ClassMapGenerator\PhpFileParser;
 use JetBrains\PHPStormStub\PhpStormStubsMap;
+use Phar;
 use ReflectionClass;
 use ReflectionFunction;
 use RuntimeException;
 use ScipPhp\File\Reader;
 
+use function array_filter;
 use function array_keys;
 use function array_merge;
+use function array_pop;
 use function array_slice;
 use function array_unique;
 use function array_values;
@@ -29,13 +32,13 @@ use function get_included_files;
 use function implode;
 use function interface_exists;
 use function is_array;
+use function is_dir;
 use function is_file;
 use function is_string;
 use function json_decode;
 use function preg_match;
 use function preg_quote;
 use function preg_replace;
-use function realpath;
 use function rtrim;
 use function str_contains;
 use function str_ends_with;
@@ -43,8 +46,6 @@ use function str_replace;
 use function str_starts_with;
 use function trait_exists;
 use function trim;
-
-use Phar;
 
 use const DIRECTORY_SEPARATOR;
 use const JSON_THROW_ON_ERROR;
@@ -80,6 +81,7 @@ final class Composer
 
     /**
      * Configuration for treating external packages as internal.
+     *
      * @var array{packages: list<string>, classes: list<string>, methods: list<string>}
      */
     private readonly array $internalConfig;
@@ -102,6 +104,7 @@ final class Composer
 
     /**
      * Normalize a path to resolve .. and . without resolving symlinks.
+     *
      * @param  non-empty-string  $path
      * @return non-empty-string
      */
@@ -292,6 +295,7 @@ final class Composer
 
     /**
      * Load the scip-php.json configuration file.
+     *
      * @return array{packages: list<string>, classes: list<string>, methods: list<string>}
      */
     private function loadInternalConfig(): array
@@ -327,6 +331,7 @@ final class Composer
 
     /**
      * Parse a JSON file from an absolute path.
+     *
      * @param  non-empty-string  $filePath
      * @return array<string, mixed>
      */
@@ -428,6 +433,7 @@ final class Composer
 
     /**
      * Check if an identifier is configured to be treated as internal.
+     *
      * @param  non-empty-string  $ident
      */
     private function isConfiguredAsInternal(string $ident): bool
@@ -442,7 +448,11 @@ final class Composer
         // Check against configured classes (e.g., "App\\Service\\MyClass")
         foreach ($this->internalConfig['classes'] as $class) {
             // Match exact class or any member of the class
-            if ($ident === $class || str_starts_with($ident, $class . '::') || str_starts_with($ident, $class . '\\')) {
+            if (
+                $ident === $class
+                || str_starts_with($ident, $class . '::')
+                || str_starts_with($ident, $class . '\\')
+            ) {
                 return true;
             }
         }
@@ -480,7 +490,11 @@ final class Composer
                 // also returns the path to the file of a namespaced function, check that the identifier is not a
                 // function. However, since it is possible that a class-like and a function have the same name, we
                 // must call {class,interface,trait,enum}_exists as a last resort.
-                ($this->loader->findFile($c) !== false || ($this->projectLoader !== null && $this->projectLoader->findFile($c) !== false)) && (
+                ($this->loader->findFile(
+                    $c,
+                ) !== false || ($this->projectLoader !== null && $this->projectLoader->findFile(
+                    $c,
+                ) !== false)) && (
                     !function_exists($c)
                     || class_exists($c) || interface_exists($c) || trait_exists($c) || enum_exists($c)
                 )

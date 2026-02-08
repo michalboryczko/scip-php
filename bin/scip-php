@@ -15,6 +15,7 @@ $longOpts = [
     'config:',
     'output:',
     'memory-limit:',
+    'experimental',
 ];
 
 $options = \getopt($shortOpts, $longOpts);
@@ -37,6 +38,7 @@ Options:
       --config=PATH            Path to scip-php.json config (default: <project-dir>/scip-php.json)
   -o, --output=PATH            Output file path (default: index.scip)
       --memory-limit=SIZE      Memory limit (default: 1G)
+      --experimental           Include experimental call kinds (function, access_array, coalesce, ternary, match)
 
 Examples:
   {$script}                                      Index current directory
@@ -122,6 +124,9 @@ if ($configPath !== null) {
     $configPath = $resolved;
 }
 
+// Experimental flag (boolean, presence = true)
+$experimental = isset($options['experimental']);
+
 // Output file path
 $outputPath = $options['o'] ?? $options['output'] ?? 'index.scip';
 if (!\is_string($outputPath) || $outputPath === '') {
@@ -153,10 +158,19 @@ if ($composerPath !== null) {
 if ($configPath !== null) {
     echo "Using config: {$configPath}\n";
 }
+if ($experimental) {
+    echo "Experimental call kinds: enabled\n";
+}
 
-$indexer = new Indexer($projectDir, $version, $args, $composerPath, $configPath);
+$indexer = new Indexer($projectDir, $version, $args, $composerPath, $configPath, $experimental);
 $index = $indexer->index();
 
 \file_put_contents($outputPath, $index->serializeToString());
-
 echo "Index written to: {$outputPath}\n";
+
+$indexer->writeCallsAndArchive($outputPath);
+
+$callsPath = \dirname($outputPath) . '/calls.json';
+$archivePath = \dirname($outputPath) . '/index.kloc';
+echo "Calls written to: {$callsPath}\n";
+echo "Archive written to: {$archivePath}\n";

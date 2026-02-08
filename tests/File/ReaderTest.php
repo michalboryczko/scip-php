@@ -42,6 +42,12 @@ final class ReaderTest extends TestCase
             self::markTestSkipped('chmod failed - likely running in Docker with volume mount');
         }
 
+        // Skip test if file is still readable (e.g., running as root in Docker)
+        if (is_readable($filename)) {
+            chmod($filename, 0644);
+            self::markTestSkipped('File still readable after chmod - likely running as root');
+        }
+
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage("Cannot read file: {$filename}.");
 

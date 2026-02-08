@@ -55,6 +55,7 @@
 //                                              > \TestData\ClassD|\TestData\ClassF $p2
 //                                              > ```
 //                                              relationship scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassD# type_definition
+//                                              relationship scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF# type_definition
       {
           return self::$b1->c2->d2 * $p1;
 //               ^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#
