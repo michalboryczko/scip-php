@@ -11,9 +11,7 @@ use Scip\Metadata;
 use Scip\PositionEncoding;
 use Scip\TextEncoding;
 use Scip\ToolInfo;
-use ScipPhp\Calls\ArchiveWriter;
 use ScipPhp\Calls\CallRecord;
-use ScipPhp\Calls\CallsWriter;
 use ScipPhp\Calls\UnifiedJsonWriter;
 use ScipPhp\Calls\ValueRecord;
 use ScipPhp\Composer\Composer;
@@ -145,21 +143,6 @@ final class Indexer
     public function getCalls(): array
     {
         return $this->calls;
-    }
-
-    /**
-     * Write calls.json and index.kloc alongside the SCIP index file.
-     *
-     * @param  string  $scipOutputPath  Path to the written index.scip file
-     */
-    public function writeCallsAndArchive(string $scipOutputPath): void
-    {
-        $dir = dirname($scipOutputPath);
-        $callsPath = $dir . '/calls.json';
-        $archivePath = $dir . '/index.kloc';
-
-        CallsWriter::write($callsPath, $this->projectRoot, $this->values, $this->calls);
-        ArchiveWriter::write($scipOutputPath, $callsPath, $archivePath);
     }
 
     /**
