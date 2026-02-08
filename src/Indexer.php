@@ -20,7 +20,6 @@ use ScipPhp\Types\Types;
 
 use function array_merge;
 use function array_values;
-use function dirname;
 use function str_replace;
 
 final class Indexer
@@ -146,19 +145,16 @@ final class Indexer
     }
 
     /**
-     * Write unified JSON output (index.json) alongside the SCIP index file.
+     * Write unified JSON output (index.json).
      *
      * Combines the SCIP index, calls, and values into a single JSON file
      * with version "4.0". Schema: kloc-contracts/scip-php-output.json.
      *
-     * @param  string  $scipOutputPath  Path to the written index.scip file
-     * @param  Index   $index           The SCIP Index protobuf object
+     * @param  string  $outputPath  Path to write index.json
+     * @param  Index   $index       The SCIP Index protobuf object
      */
-    public function writeUnifiedJson(string $scipOutputPath, Index $index): void
+    public function writeUnifiedJson(string $outputPath, Index $index): void
     {
-        $dir = dirname($scipOutputPath);
-        $unifiedPath = $dir . '/index.json';
-
-        UnifiedJsonWriter::write($unifiedPath, $index, $this->values, $this->calls);
+        UnifiedJsonWriter::write($outputPath, $index, $this->values, $this->calls);
     }
 }

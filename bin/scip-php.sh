@@ -106,7 +106,7 @@ docker run --rm \
     -v "$OUTPUT_DIR:/output" \
     "$IMAGE_NAME" \
     -d /input \
-    -o /output/index.scip \
+    -o /output/index.json \
     $EXPERIMENTAL
 
 echo ""

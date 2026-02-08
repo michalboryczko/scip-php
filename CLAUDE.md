@@ -22,7 +22,7 @@ This runs scip-php in Docker with:
 - `/path/to/project` mounted as `/input` (read-only)
 - `/path/to/output` mounted as `/output`
 
-Output files: `index.scip`, `index.json` (unified JSON with SCIP + calls + values, version 4.0)
+Output file: `index.json` (unified JSON with SCIP + calls + values, version 4.0)
 
 ### Call Kinds
 

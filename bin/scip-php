@@ -36,14 +36,14 @@ Options:
   -d, --project-dir=PATH       Project directory to index (default: current directory)
   -c, --composer=PATH          Path to composer.json (default: <project-dir>/composer.json)
       --config=PATH            Path to scip-php.json config (default: <project-dir>/scip-php.json)
-  -o, --output=PATH            Output file path (default: index.scip)
+  -o, --output=PATH            Output file path (default: index.json)
       --memory-limit=SIZE      Memory limit (default: 1G)
       --experimental           Include experimental call kinds (function, access_array, coalesce, ternary, match)
 
 Examples:
   {$script}                                      Index current directory
   {$script} -d /path/to/project                  Index specific project
-  {$script} -d /path/to/project -o output.scip   Index and save to custom output file
+  {$script} -d /path/to/project -o output.json   Index and save to custom output file
   {$script} --composer=/custom/composer.json     Use custom composer.json location
   {$script} --config=/custom/scip-php.json       Use custom config file
 
@@ -128,7 +128,7 @@ if ($configPath !== null) {
 $experimental = isset($options['experimental']);
 
 // Output file path
-$outputPath = $options['o'] ?? $options['output'] ?? 'index.scip';
+$outputPath = $options['o'] ?? $options['output'] ?? 'index.json';
 if (!\is_string($outputPath) || $outputPath === '') {
     echo "Invalid output path.\n";
     exit(1);
@@ -167,5 +167,4 @@ $index = $indexer->index();
 
 $indexer->writeUnifiedJson($outputPath, $index);
 
-$unifiedPath = \dirname($outputPath) . '/index.json';
-echo "Unified JSON written to: {$unifiedPath}\n";
+echo "Unified JSON written to: {$outputPath}\n";
