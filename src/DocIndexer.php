@@ -57,7 +57,6 @@ use ScipPhp\Calls\ValueRecord;
 use ScipPhp\Composer\Composer;
 use ScipPhp\Parser\DocCommentParser;
 use ScipPhp\Parser\PosResolver;
-use ScipPhp\Types\Internal\SyntheticTypeSymbol;
 use ScipPhp\Types\Internal\Type;
 use ScipPhp\Types\Types;
 
@@ -82,8 +81,6 @@ final class DocIndexer
     private readonly DocCommentParser $docCommentParser;
 
     private readonly PrettyPrinter $prettyPrinter;
-
-    private readonly SyntheticTypeSymbol $syntheticTypeSymbol;
 
     /** @var array<non-empty-string, SymbolInformation> */
     public array $symbols;
@@ -175,7 +172,6 @@ final class DocIndexer
         $this->docGenerator = new DocGenerator();
         $this->docCommentParser = new DocCommentParser();
         $this->prettyPrinter = new PrettyPrinter();
-        $this->syntheticTypeSymbol = new SyntheticTypeSymbol($namer);
         $this->symbols = [];
         $this->extSymbols = [];
         $this->occurrences = [];

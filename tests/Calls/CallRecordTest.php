@@ -20,7 +20,6 @@ final class CallRecordTest extends TestCase
         $arg = new ArgumentRecord(
             position: 0,
             parameter: 'scip-php composer . App/Repo#save().($entity)',
-            valueType: 'scip-php composer pkg ver App/Order#',
             valueId: 'src/Service.php:5:8',
             valueExpr: '$order',
         );
@@ -31,7 +30,6 @@ final class CallRecordTest extends TestCase
 
         self::assertSame(0, $decoded['position']);
         self::assertSame('scip-php composer . App/Repo#save().($entity)', $decoded['parameter']);
-        self::assertSame('scip-php composer pkg ver App/Order#', $decoded['value_type']);
         self::assertSame('src/Service.php:5:8', $decoded['value_id']);
         self::assertSame('$order', $decoded['value_expr']);
     }
@@ -41,7 +39,6 @@ final class CallRecordTest extends TestCase
         $arg = new ArgumentRecord(
             position: 1,
             parameter: null,
-            valueType: null,
             valueId: null,
             valueExpr: '42',
         );
@@ -52,7 +49,6 @@ final class CallRecordTest extends TestCase
 
         self::assertSame(1, $decoded['position']);
         self::assertNull($decoded['parameter']);
-        self::assertNull($decoded['value_type']);
         self::assertNull($decoded['value_id']);
         self::assertSame('42', $decoded['value_expr']);
     }
@@ -63,14 +59,12 @@ final class CallRecordTest extends TestCase
             new ArgumentRecord(
                 position: 0,
                 parameter: 'scip-php composer . App/Repo#save().($entity)',
-                valueType: 'scip-php composer pkg ver App/Order#',
                 valueId: null,
                 valueExpr: '$order',
             ),
             new ArgumentRecord(
                 position: 1,
                 parameter: 'scip-php composer . App/Repo#save().($flush)',
-                valueType: 'scip-php php builtin . bool#',
                 valueId: null,
                 valueExpr: 'true',
             ),
@@ -220,8 +214,8 @@ final class CallRecordTest extends TestCase
             receiverValueId: null,
             location: ['file' => 'src/Service.php', 'line' => 20, 'col' => 12],
             arguments: [],
-            leftId: 'src/Service.php:20:4',
-            rightId: 'src/Service.php:20:18',
+            leftValueId: 'src/Service.php:20:4',
+            rightValueId: 'src/Service.php:20:18',
         );
 
         $json = json_encode($call, JSON_THROW_ON_ERROR);
@@ -231,14 +225,14 @@ final class CallRecordTest extends TestCase
         self::assertSame('coalesce', $decoded['kind']);
         self::assertSame('operator', $decoded['kind_type']);
         self::assertSame('scip-php operator . coalesce#', $decoded['callee']);
-        self::assertSame('src/Service.php:20:4', $decoded['left_id']);
-        self::assertSame('src/Service.php:20:18', $decoded['right_id']);
+        self::assertSame('src/Service.php:20:4', $decoded['left_value_id']);
+        self::assertSame('src/Service.php:20:18', $decoded['right_value_id']);
         // Operator fields should be present
-        self::assertArrayHasKey('left_id', $decoded);
-        self::assertArrayHasKey('right_id', $decoded);
+        self::assertArrayHasKey('left_value_id', $decoded);
+        self::assertArrayHasKey('right_value_id', $decoded);
         // Other operator fields should not be present when null
-        self::assertArrayNotHasKey('condition_id', $decoded);
-        self::assertArrayNotHasKey('subject_id', $decoded);
+        self::assertArrayNotHasKey('condition_value_id', $decoded);
+        self::assertArrayNotHasKey('subject_value_id', $decoded);
     }
 
     public function testCallRecordWithTernaryOperator(): void
@@ -253,9 +247,9 @@ final class CallRecordTest extends TestCase
             receiverValueId: null,
             location: ['file' => 'src/Service.php', 'line' => 25, 'col' => 8],
             arguments: [],
-            conditionId: 'src/Service.php:25:4',
-            trueId: 'src/Service.php:25:16',
-            falseId: 'src/Service.php:25:22',
+            conditionValueId: 'src/Service.php:25:4',
+            trueValueId: 'src/Service.php:25:16',
+            falseValueId: 'src/Service.php:25:22',
         );
 
         $json = json_encode($call, JSON_THROW_ON_ERROR);
@@ -264,9 +258,9 @@ final class CallRecordTest extends TestCase
 
         self::assertSame('ternary_full', $decoded['kind']);
         self::assertSame('operator', $decoded['kind_type']);
-        self::assertSame('src/Service.php:25:4', $decoded['condition_id']);
-        self::assertSame('src/Service.php:25:16', $decoded['true_id']);
-        self::assertSame('src/Service.php:25:22', $decoded['false_id']);
+        self::assertSame('src/Service.php:25:4', $decoded['condition_value_id']);
+        self::assertSame('src/Service.php:25:16', $decoded['true_value_id']);
+        self::assertSame('src/Service.php:25:22', $decoded['false_value_id']);
     }
 
     public function testCallRecordWithMatchExpression(): void
@@ -281,7 +275,7 @@ final class CallRecordTest extends TestCase
             receiverValueId: null,
             location: ['file' => 'src/Service.php', 'line' => 30, 'col' => 8],
             arguments: [],
-            subjectId: 'src/Service.php:30:14',
+            subjectValueId: 'src/Service.php:30:14',
             armIds: ['src/Service.php:31:20', 'src/Service.php:32:20', 'src/Service.php:33:15'],
         );
 
@@ -291,7 +285,7 @@ final class CallRecordTest extends TestCase
 
         self::assertSame('match', $decoded['kind']);
         self::assertSame('operator', $decoded['kind_type']);
-        self::assertSame('src/Service.php:30:14', $decoded['subject_id']);
+        self::assertSame('src/Service.php:30:14', $decoded['subject_value_id']);
         self::assertSame(
             ['src/Service.php:31:20', 'src/Service.php:32:20', 'src/Service.php:33:15'],
             $decoded['arm_ids'],
@@ -337,7 +331,7 @@ final class CallRecordTest extends TestCase
             receiverValueId: 'src/Service.php:10:4',
             location: ['file' => 'src/Service.php', 'line' => 10, 'col' => 8],
             arguments: [],
-            keyId: 'src/Service.php:10:12',
+            keyValueId: 'src/Service.php:10:12',
         );
 
         $json = json_encode($call, JSON_THROW_ON_ERROR);
@@ -346,6 +340,6 @@ final class CallRecordTest extends TestCase
 
         self::assertSame('access_array', $decoded['kind']);
         self::assertSame('access', $decoded['kind_type']);
-        self::assertSame('src/Service.php:10:12', $decoded['key_id']);
+        self::assertSame('src/Service.php:10:12', $decoded['key_value_id']);
     }
 }

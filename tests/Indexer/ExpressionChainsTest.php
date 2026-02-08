@@ -47,7 +47,8 @@ final class ExpressionChainsTest extends TestCase
     #[RunInSeparateProcess]
     public function testExpressionChainsAreTracked(): void
     {
-        $indexer = new Indexer(self::TESTDATA_DIR . 'scip-php-test', 'test', []);
+        // Enable experimental mode to test coalesce, ternary, and other operators
+        $indexer = new Indexer(self::TESTDATA_DIR . 'scip-php-test', 'test', [], null, null, true);
         $indexer->index();
         $this->values = $indexer->getValues();
         $this->calls = $indexer->getCalls();
@@ -115,8 +116,8 @@ final class ExpressionChainsTest extends TestCase
         // Coalesce calls should have operator symbol and left/right IDs
         foreach ($coalesceCalls as $call) {
             self::assertSame('scip-php operator . coalesce#', $call->callee, 'Coalesce should have operator symbol');
-            self::assertNotNull($call->leftId, 'Coalesce should have left_id');
-            self::assertNotNull($call->rightId, 'Coalesce should have right_id');
+            self::assertNotNull($call->leftValueId, 'Coalesce should have left_id');
+            self::assertNotNull($call->rightValueId, 'Coalesce should have right_id');
         }
     }
 
@@ -201,7 +202,7 @@ final class ExpressionChainsTest extends TestCase
         $coalesceCalls = $this->findCallsByKind('coalesce');
         $coalesceWithRefs = array_filter(
             $coalesceCalls,
-            static fn(CallRecord $c): bool => $c->leftId !== null && $c->rightId !== null,
+            static fn(CallRecord $c): bool => $c->leftValueId !== null && $c->rightValueId !== null,
         );
         self::assertNotEmpty($coalesceWithRefs, 'Expected coalesce with left_id and right_id');
 
@@ -209,12 +210,12 @@ final class ExpressionChainsTest extends TestCase
         $coalesce = array_values($coalesceWithRefs)[0];
 
         // The left_id should reference an existing value or call
-        $leftExists = isset($this->valuesById[$coalesce->leftId])
-            || isset($this->callsById[$coalesce->leftId]);
+        $leftExists = isset($this->valuesById[$coalesce->leftValueId])
+            || isset($this->callsById[$coalesce->leftValueId]);
         self::assertTrue($leftExists, 'left_id must reference existing value or call');
 
         // Trace back through receiver_value_id chain until we hit null (base expression)
-        $chain = $this->traceReceiverChain($coalesce->leftId);
+        $chain = $this->traceReceiverChain($coalesce->leftValueId);
         // Chain should have at least the coalesce's left operand
         self::assertNotEmpty($chain, 'Expected non-empty receiver chain for coalesce left operand');
 

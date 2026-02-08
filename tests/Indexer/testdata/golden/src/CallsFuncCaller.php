@@ -26,7 +26,7 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $result: mixed
+//        > $result: string
 //        documentation
 //        > ```
 //                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/callsHelperFunction().

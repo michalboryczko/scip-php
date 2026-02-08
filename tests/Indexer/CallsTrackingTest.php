@@ -28,7 +28,8 @@ final class CallsTrackingTest extends TestCase
     #[RunInSeparateProcess]
     public function testCallsAreCollected(): void
     {
-        $indexer = new Indexer(self::TESTDATA_DIR . 'scip-php-test', 'test', []);
+        // Enable experimental mode to test function calls
+        $indexer = new Indexer(self::TESTDATA_DIR . 'scip-php-test', 'test', [], null, null, true);
         $indexer->index();
         $this->calls = $indexer->getCalls();
 

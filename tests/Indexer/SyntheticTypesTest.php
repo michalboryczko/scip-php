@@ -35,7 +35,8 @@ final class SyntheticTypesTest extends TestCase
     #[RunInSeparateProcess]
     public function testSyntheticTypeSymbolsAreGenerated(): void
     {
-        $indexer = new Indexer(self::TESTDATA_DIR . 'scip-php-test', 'test', []);
+        // Enable experimental mode to test coalesce and other operators
+        $indexer = new Indexer(self::TESTDATA_DIR . 'scip-php-test', 'test', [], null, null, true);
         $indexer->index();
         $this->calls = $indexer->getCalls();
 
@@ -110,9 +111,12 @@ final class SyntheticTypesTest extends TestCase
 
         self::assertNotEmpty($nullableUnions, 'Expected nullable types to be unions containing null');
 
-        // Each nullable union should have the format: Type|null (sorted)
+        // Each nullable union should contain null as one of the types (sorted alphabetically)
+        // e.g., "null|string#" or "Foo|null#"
         foreach ($nullableUnions as $type) {
-            self::assertStringContainsString('|null#', $type, "Nullable union '{$type}' should end with |null#");
+            // Check that null is properly in the union (as |null# at end or null| at start)
+            $hasNull = str_contains($type, '|null#') || str_contains($type, '. null|');
+            self::assertTrue($hasNull, "Nullable union '{$type}' should contain null as union member");
         }
     }
 

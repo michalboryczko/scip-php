@@ -35,7 +35,7 @@
 //                           documentation
 //                           > ```
 //                           ^^^^ reference local 0
-//                           ^^^^ reference local 0
+//                           ^^^^ reference local 3
 //                                   ^^^^^^ definition local 1
 //                                   documentation
 //                                   > ```php
@@ -44,7 +44,7 @@
 //                                   documentation
 //                                   > ```
 //                                   ^^^^^^ reference local 1
-//                                   ^^^^^^ reference local 1
+//                                   ^^^^^^ reference local 2
               echo $key;
 //                 ^^^^ reference local 0
               echo $value;

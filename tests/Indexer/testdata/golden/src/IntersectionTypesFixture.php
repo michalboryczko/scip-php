@@ -57,12 +57,14 @@
 //        documentation
 //        > ```php
 //        documentation
-//        > $count: mixed
+//        > $count: int
 //        documentation
 //        > ```
 //                 ^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#acceptIntersection().($collection)
+//                              ^^^^^ reference scip-php composer php 8.4.15 Countable#count().
           $collection->rewind();
 //        ^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#acceptIntersection().($collection)
+//                     ^^^^^^ reference scip-php composer php 8.4.15 Iterator#rewind().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#acceptIntersection().
   
@@ -113,15 +115,17 @@
           // Both log() from Loggable and getTag() from Taggable should work
           $obj->log('message');
 //        ^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#customIntersection().($obj)
+//              ^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Loggable#log().
           $tag = $obj->getTag();
 //        ^^^^ definition local 1
 //        documentation
 //        > ```php
 //        documentation
-//        > $tag: mixed
+//        > $tag: string
 //        documentation
 //        > ```
 //               ^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#customIntersection().($obj)
+//                     ^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Taggable#getTag().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#customIntersection().
   
@@ -150,8 +154,10 @@
           // Chain on intersection-typed receiver
           $collection->rewind();
 //        ^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#chainedIntersectionCall().($collection)
+//                     ^^^^^^ reference scip-php composer php 8.4.15 Iterator#rewind().
           return $collection->count();
 //               ^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#chainedIntersectionCall().($collection)
+//                            ^^^^^ reference scip-php composer php 8.4.15 Countable#count().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#chainedIntersectionCall().
   
@@ -180,6 +186,7 @@
           // This is nullable intersection = union of intersection and null
           $collection?->count();
 //        ^^^^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#dnfType().($collection)
+//                      ^^^^^ reference scip-php composer php 8.4.15 Countable#count().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#dnfType().
   

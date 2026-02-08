@@ -65,7 +65,6 @@ final class CallsWriterTest extends TestCase
                     new ArgumentRecord(
                         position: 0,
                         parameter: 'scip-php composer . App/Repo#save().($entity)',
-                        valueType: null,
                         valueId: 'src/Service.php:5:8',
                         valueExpr: '$order',
                     ),

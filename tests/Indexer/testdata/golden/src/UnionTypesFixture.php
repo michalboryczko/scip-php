@@ -129,6 +129,7 @@
           // This should produce a call with callee = scip-php synthetic union . Auditor|Logger#log().
           $handler->log('event');
 //        ^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#callOnUnionReceiver().($handler)
+//                  ^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Logger#log().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#callOnUnionReceiver().
   
@@ -158,6 +159,7 @@
           // Each step produces a call record
           return $handler->getTag();
 //               ^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#chainedUnionCall().($handler)
+//                         ^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Logger#getTag().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#chainedUnionCall().
   
@@ -187,6 +189,7 @@
           // Method call on union - b2 exists on both ClassA (property) and ClassB (property)
           return $obj->b2;
 //               ^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#multiClassUnion().($obj)
+//                     ^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b2.
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#multiClassUnion().
   
@@ -335,6 +338,7 @@
       {
           $handler->log('processed');
 //        ^^^^^^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#processHandler().($handler)
+//                  ^^^ reference scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Logger#log().
       }
 //    ⌃ enclosing_range_end scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#processHandler().
   }

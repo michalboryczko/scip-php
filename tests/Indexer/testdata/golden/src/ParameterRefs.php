@@ -48,7 +48,7 @@
 //                           documentation
 //                           > ```
 //                           ^^^^^ reference local 1
-//                           ^^^^^ reference local 1
+//                           ^^^^^ reference local 2
               $result[] = $item;
 //            ^^^^^^^ reference local 0
 //                        ^^^^^ reference local 1
