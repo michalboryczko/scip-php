@@ -21,6 +21,7 @@ show_help() {
     echo "  index.scip    SCIP index file"
     echo "  calls.json    Call tracking data"
     echo "  index.kloc    KLOC archive"
+    echo "  index.json    Unified JSON output (SCIP + calls + values, version 4.0)"
     echo ""
     echo "Examples:"
     echo "  scip-php.sh -d /path/to/project"

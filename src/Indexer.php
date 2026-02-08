@@ -14,6 +14,7 @@ use Scip\ToolInfo;
 use ScipPhp\Calls\ArchiveWriter;
 use ScipPhp\Calls\CallRecord;
 use ScipPhp\Calls\CallsWriter;
+use ScipPhp\Calls\UnifiedJsonWriter;
 use ScipPhp\Calls\ValueRecord;
 use ScipPhp\Composer\Composer;
 use ScipPhp\Parser\Parser;
@@ -159,5 +160,22 @@ final class Indexer
 
         CallsWriter::write($callsPath, $this->projectRoot, $this->values, $this->calls);
         ArchiveWriter::write($scipOutputPath, $callsPath, $archivePath);
+    }
+
+    /**
+     * Write unified JSON output (index.json) alongside the SCIP index file.
+     *
+     * Combines the SCIP index, calls, and values into a single JSON file
+     * with version "4.0". Schema: kloc-contracts/scip-php-output.json.
+     *
+     * @param  string  $scipOutputPath  Path to the written index.scip file
+     * @param  Index   $index           The SCIP Index protobuf object
+     */
+    public function writeUnifiedJson(string $scipOutputPath, Index $index): void
+    {
+        $dir = dirname($scipOutputPath);
+        $unifiedPath = $dir . '/index.json';
+
+        UnifiedJsonWriter::write($unifiedPath, $index, $this->values, $this->calls);
     }
 }

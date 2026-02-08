@@ -169,8 +169,11 @@ $index = $indexer->index();
 echo "Index written to: {$outputPath}\n";
 
 $indexer->writeCallsAndArchive($outputPath);
+$indexer->writeUnifiedJson($outputPath, $index);
 
 $callsPath = \dirname($outputPath) . '/calls.json';
 $archivePath = \dirname($outputPath) . '/index.kloc';
+$unifiedPath = \dirname($outputPath) . '/index.json';
 echo "Calls written to: {$callsPath}\n";
 echo "Archive written to: {$archivePath}\n";
+echo "Unified JSON written to: {$unifiedPath}\n";
