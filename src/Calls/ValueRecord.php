@@ -22,6 +22,7 @@ final readonly class ValueRecord implements JsonSerializable
      * @param  array{file: string, line: int, col: int}  $location  Source location
      * @param  ?string  $sourceCallId    ID of call that produces this value (for locals/results)
      * @param  ?string  $sourceValueId   ID of value this was assigned from (for locals)
+     * @param  ?string  $promotedPropertySymbol  SCIP symbol of the promoted Property (for constructor promotion params)
      */
     public function __construct(
         public string $id,
@@ -31,6 +32,7 @@ final readonly class ValueRecord implements JsonSerializable
         public array $location,
         public ?string $sourceCallId = null,
         public ?string $sourceValueId = null,
+        public ?string $promotedPropertySymbol = null,
     ) {
     }
 
@@ -51,6 +53,9 @@ final readonly class ValueRecord implements JsonSerializable
         }
         if ($this->sourceValueId !== null) {
             $result['source_value_id'] = $this->sourceValueId;
+        }
+        if ($this->promotedPropertySymbol !== null) {
+            $result['promoted_property_symbol'] = $this->promotedPropertySymbol;
         }
 
         return $result;

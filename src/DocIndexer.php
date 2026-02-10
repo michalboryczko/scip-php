@@ -261,8 +261,10 @@ final class DocIndexer
                 $this->def($pos, $p, $n->var, SyntaxKind::IdentifierParameter);
                 // Register promoted property parameter type for resolution
                 $this->registerParameterType($n);
+                // Resolve the promoted Property symbol for the assigned_from edge
+                $promotedPropertySymbol = $this->namer->name($p);
                 // Create ValueRecord at declaration site (One Value Per Declaration Rule)
-                $this->createParameterValueRecord($pos, $n);
+                $this->createParameterValueRecord($pos, $n, $promotedPropertySymbol);
                 return;
             }
             $this->def($pos, $n, $n->var, SyntaxKind::IdentifierParameter);
@@ -933,8 +935,9 @@ final class DocIndexer
      *
      * @param PosResolver $pos Position resolver for source locations
      * @param Param $n The parameter node
+     * @param ?string $promotedPropertySymbol SCIP symbol of the promoted Property (for constructor promotion)
      */
-    private function createParameterValueRecord(PosResolver $pos, Param $n): void
+    private function createParameterValueRecord(PosResolver $pos, Param $n, ?string $promotedPropertySymbol = null): void
     {
         if (!($n->var instanceof Variable) || !is_string($n->var->name)) {
             return;
@@ -986,6 +989,7 @@ final class DocIndexer
             location: $location,
             sourceCallId: null, // Parameters don't have a source call
             sourceValueId: null,
+            promotedPropertySymbol: $promotedPropertySymbol,
         );
 
         $this->values[] = $valueRecord;
