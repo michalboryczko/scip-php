@@ -327,10 +327,12 @@ final class DocIndexer
             if ($symbol !== null) {
                 $this->ref($pos, $symbol, $n->name);
 
-                // Call tracking
-                $callRecord = $this->buildCallRecord($pos, $n, $symbol, $n->getArgs());
-                if ($callRecord !== null) {
-                    $this->addCallWithResultValue($callRecord);
+                // Call tracking (skip first-class callables like $obj->method(...))
+                if (!$n->isFirstClassCallable()) {
+                    $callRecord = $this->buildCallRecord($pos, $n, $symbol, $n->getArgs());
+                    if ($callRecord !== null) {
+                        $this->addCallWithResultValue($callRecord);
+                    }
                 }
             }
             return;
@@ -339,7 +341,7 @@ final class DocIndexer
             $symbol = $this->types->nameDef($n->name);
             if ($symbol !== null) {
                 // Function calls are experimental - only track with --experimental flag
-                if ($this->experimental) {
+                if ($this->experimental && !$n->isFirstClassCallable()) {
                     $callRecord = $this->buildCallRecord($pos, $n, $symbol, $n->getArgs());
                     if ($callRecord !== null) {
                         $this->addCallWithResultValue($callRecord);
@@ -436,6 +438,9 @@ final class DocIndexer
     ): void {
         $symbol = $this->namer->name($n);
         if ($symbol === null) {
+            return;
+        }
+        if (!mb_check_encoding($symbol, 'UTF-8')) {
             return;
         }
         $doc = $this->docGenerator->create($n);
@@ -846,6 +851,9 @@ final class DocIndexer
         int $kind = SyntaxKind::Identifier,
         int $role = SymbolRole::UnspecifiedSymbolRole,
     ): void {
+        if (!mb_check_encoding($symbol, 'UTF-8')) {
+            return;
+        }
         if (!str_starts_with($symbol, 'local ')) {
             $ident = $this->namer->extractIdent($symbol);
             if ($this->composer->isDependency($ident)) {

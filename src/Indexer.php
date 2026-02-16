@@ -47,6 +47,7 @@ final class Indexer
      * @param  ?non-empty-string       $composerJsonPath  Optional path to composer.json
      * @param  ?non-empty-string       $configPath        Optional path to scip-php.json
      * @param  bool                    $experimental      Whether to include experimental call kinds
+     * @param  bool                    $internalAll       Whether to treat all vendor packages as internal
      */
     public function __construct(
         private string $projectRoot,
@@ -55,6 +56,7 @@ final class Indexer
         ?string $composerJsonPath = null,
         ?string $configPath = null,
         private bool $experimental = false,
+        private bool $internalAll = false,
     ) {
         $this->metadata = new Metadata([
             'version'                => 1,
@@ -68,7 +70,7 @@ final class Indexer
         ]);
 
         $this->parser = new Parser();
-        $this->composer = new Composer($this->projectRoot, $composerJsonPath, $configPath);
+        $this->composer = new Composer($this->projectRoot, $composerJsonPath, $configPath, $internalAll);
         $this->namer = new SymbolNamer($this->composer);
         $this->types = new Types($this->composer, $this->namer);
     }
@@ -85,8 +87,13 @@ final class Indexer
         $allCalls = [];
         foreach ($projectFiles as $filename) {
             $relativePath = str_replace($this->projectRoot . '/', '', $filename);
-            $docIndexer = new DocIndexer($this->composer, $this->namer, $this->types, $relativePath, $this->experimental);
-            $this->parser->traverse($filename, $docIndexer, $docIndexer->index(...));
+            try {
+                $docIndexer = new DocIndexer($this->composer, $this->namer, $this->types, $relativePath, $this->experimental);
+                $this->parser->traverse($filename, $docIndexer, $docIndexer->index(...));
+            } catch (\Throwable $e) {
+                fwrite(STDERR, "Warning: skipping {$relativePath}: {$e->getMessage()}\n");
+                continue;
+            }
             $documents[] = new Document([
                 'language'          => Language::PHP,
                 'relative_path'     => $relativePath,

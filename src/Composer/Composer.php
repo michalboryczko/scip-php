@@ -66,7 +66,7 @@ final class Composer
     private readonly string $scipPhpVendorDir;
 
     /** @var list<non-empty-string> */
-    private readonly array $projectFiles;
+    private array $projectFiles;
 
     private readonly ClassLoader $loader;
 
@@ -133,15 +133,20 @@ final class Composer
      * @param  non-empty-string       $projectRoot
      * @param  ?non-empty-string      $composerJsonPath  Optional path to composer.json (default: <projectRoot>/composer.json)
      * @param  ?non-empty-string      $configPath        Optional path to scip-php.json (default: <projectRoot>/scip-php.json)
+     * @param  bool                   $internalAll       Whether to treat all vendor packages as internal
      */
     public function __construct(
         private readonly string $projectRoot,
         ?string $composerJsonPath = null,
         ?string $configPath = null,
+        private bool $internalAll = false,
     ) {
         // Resolve composer.json path
         $this->composerJsonPath = $composerJsonPath ?? self::join($this->projectRoot, 'composer.json');
         $this->configPath = $configPath;
+
+        // Load scip-php.json config early — needed before building projectFiles
+        $this->internalConfig = $this->loadInternalConfig();
 
         $json = $this->parseJsonFile($this->composerJsonPath);
         $autoload = is_array($json['autoload'] ?? null) ? $json['autoload'] : [];
@@ -244,6 +249,12 @@ final class Composer
         }
         $this->pkgsByPaths = $pkgsByPaths;
 
+        // Add vendor package files to projectFiles when configured as internal
+        $this->projectFiles = array_merge(
+            $this->projectFiles,
+            $this->collectInternalVendorFiles($installed['versions']),
+        );
+
         // Load composer.lock from the same directory as composer.json
         $composerDir = dirname($this->composerJsonPath);
         $lockFile = self::join($composerDir, 'composer.lock');
@@ -288,9 +299,6 @@ final class Composer
         }
 
         $this->userConsts = get_defined_constants(categorize: true)['user'] ?? []; // @phpstan-ignore-line
-
-        // Load scip-php.json config for treating external packages as internal
-        $this->internalConfig = $this->loadInternalConfig();
     }
 
     /**
@@ -316,6 +324,11 @@ final class Composer
             return $default;
         }
 
+        // Support "internal_all": true in config file (merged with CLI flag)
+        if (($config['internal_all'] ?? false) === true) {
+            $this->internalAll = true;
+        }
+
         return [
             'packages' => is_array($config['internal_packages'] ?? null)
                 ? array_values(array_filter($config['internal_packages'], 'is_string'))
@@ -327,6 +340,57 @@ final class Composer
                 ? array_values(array_filter($config['internal_methods'], 'is_string'))
                 : [],
         ];
+    }
+
+    /**
+     * Collect PHP files from vendor packages configured as internal.
+     *
+     * When internalAll is set, collects files from ALL vendor packages.
+     * Otherwise, collects files only from packages listed in internal_packages.
+     *
+     * @param  array<string, mixed>  $versions  The 'versions' array from installed.php
+     * @return list<non-empty-string>
+     */
+    private function collectInternalVendorFiles(array $versions): array
+    {
+        if (!$this->internalAll && empty($this->internalConfig['packages'])) {
+            return [];
+        }
+
+        $files = [];
+        $generator = new ClassMapGenerator();
+
+        foreach ($versions as $name => $info) {
+            if (!is_string($name) || $name === '' || !isset($info['install_path'])) {
+                continue;
+            }
+            // Skip the root package (that's the project itself)
+            if ($name === $this->pkgName) {
+                continue;
+            }
+            // Check if this package should be treated as internal
+            if (!$this->internalAll && !in_array($name, $this->internalConfig['packages'], true)) {
+                continue;
+            }
+            $path = $info['install_path'];
+            if (!is_string($path) || !is_dir($path)) {
+                continue;
+            }
+            // Scan the package's src/ directory (or root) for PHP files
+            $generator->scanPaths($path);
+        }
+
+        $map = $generator->getClassMap();
+        $map->sort();
+        $classFiles = array_unique(array_values($map->getMap()));
+
+        foreach ($classFiles as $f) {
+            if (is_string($f) && $f !== '') {
+                $files[] = $f;
+            }
+        }
+
+        return $files;
     }
 
     /**
@@ -424,6 +488,11 @@ final class Composer
     /** @param  non-empty-string  $ident */
     public function isDependency(string $ident): bool
     {
+        // When internal-all is set, nothing is a dependency
+        if ($this->internalAll) {
+            return false;
+        }
+
         // Check if the identifier is configured as internal
         if ($this->isConfiguredAsInternal($ident)) {
             return false;

@@ -15,6 +15,7 @@ show_help() {
     echo "  -d, --project-dir=PATH    Project directory to index (required)"
     echo "  -o, --output=PATH         Output directory (default: current directory)"
     echo "  --experimental            Include experimental call kinds (function, access_array, etc.)"
+    echo "  --internal-all            Treat all vendor packages as internal (full indexing)"
     echo "  -h, --help                Display this help and exit"
     echo ""
     echo "Output files:"
@@ -32,6 +33,7 @@ show_help() {
 PROJECT_DIR=""
 OUTPUT_DIR="$(pwd)"
 EXPERIMENTAL=""
+INTERNAL_ALL=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -53,6 +55,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --experimental)
             EXPERIMENTAL="--experimental"
+            shift
+            ;;
+        --internal-all)
+            INTERNAL_ALL="--internal-all"
             shift
             ;;
         -h|--help)
@@ -96,6 +102,9 @@ echo "Output:   $OUTPUT_DIR"
 if [[ -n "$EXPERIMENTAL" ]]; then
     echo "Mode:     experimental (including all call kinds)"
 fi
+if [[ -n "$INTERNAL_ALL" ]]; then
+    echo "Packages: all vendor packages treated as internal"
+fi
 echo ""
 
 # Run Docker with volume mounts
@@ -107,7 +116,8 @@ docker run --rm \
     "$IMAGE_NAME" \
     -d /input \
     -o /output/index.json \
-    $EXPERIMENTAL
+    $EXPERIMENTAL \
+    $INTERNAL_ALL
 
 echo ""
 echo "Done!"
