@@ -94,25 +94,26 @@ final class Indexer
                 fwrite(STDERR, "Warning: skipping {$relativePath}: {$e->getMessage()}\n");
                 continue;
             }
+            $ctx = $docIndexer->getContext();
             $documents[] = new Document([
                 'language'          => Language::PHP,
                 'relative_path'     => $relativePath,
-                'occurrences'       => $docIndexer->occurrences,
-                'symbols'           => array_values($docIndexer->symbols),
+                'occurrences'       => $ctx->occurrences,
+                'symbols'           => array_values($ctx->symbols),
                 'position_encoding' => PositionEncoding::UTF8CodeUnitOffsetFromLineStart,
             ]);
-            foreach ($docIndexer->extSymbols as $symbol => $info) {
+            foreach ($ctx->extSymbols as $symbol => $info) {
                 $extSymbols[$symbol] = $info;
             }
             // Collect and deduplicate synthetic type symbols
-            foreach ($docIndexer->syntheticTypeSymbols as $symbol => $info) {
+            foreach ($ctx->syntheticTypeSymbols as $symbol => $info) {
                 $syntheticTypes[$symbol] = $info;
             }
-            if ($docIndexer->values !== []) {
-                $allValues = array_merge($allValues, $docIndexer->values);
+            if ($ctx->values !== []) {
+                $allValues = array_merge($allValues, $ctx->values);
             }
-            if ($docIndexer->calls !== []) {
-                $allCalls = array_merge($allCalls, $docIndexer->calls);
+            if ($ctx->calls !== []) {
+                $allCalls = array_merge($allCalls, $ctx->calls);
             }
         }
 
