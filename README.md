@@ -1,19 +1,21 @@
 # scip-php
 
-PHP code indexer that generates SCIP indexes and **unified JSON** output for data flow analysis.
+PHP SCIP indexer that produces unified JSON output containing code structure, call sites, and data flow information. Fork of [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php) with significant extensions for call tracking and data flow analysis.
 
+## Pipeline Position
 
-## Features
+```
+PHP code -> scip-php -> index.json -> kloc-mapper -> sot.json -> kloc-cli -> output
+```
 
-- **SCIP Index** (`index.scip`) - Standard SCIP format for code navigation
-- **Unified JSON** (`index.json`) - Combined SCIP index + call sites + values + data flow in one file (version 4.0)
+scip-php is the first step. It analyzes PHP source code and produces `index.json` (unified JSON with SCIP index + call graph + value tracking).
 
 ## Installation
 
 ### Docker (recommended)
 
 ```bash
-./build/build.sh  # builds scip-php Docker image
+./build/build.sh   # builds scip-php Docker image
 ```
 
 ### Via Composer
@@ -21,6 +23,8 @@ PHP code indexer that generates SCIP indexes and **unified JSON** output for dat
 ```bash
 composer require --dev kloc/scip-php
 ```
+
+Requires PHP 8.3+.
 
 ## Usage
 
@@ -36,8 +40,8 @@ composer require --dev kloc/scip-php
 
 | File | Description |
 |------|-------------|
-| `index.scip` | Standard SCIP protobuf index |
-| `index.json` | Unified JSON output (SCIP + calls + values, version 4.0) |
+| `index.scip` | Standard SCIP protobuf index (compatible with Sourcegraph) |
+| `index.json` | Unified JSON output: SCIP + calls + values (v4.0) |
 
 ### Options
 
@@ -50,7 +54,7 @@ composer require --dev kloc/scip-php
     --memory-limit=SIZE   Memory limit (default: 1G)
 ```
 
-## Unified JSON Format (version 4.0)
+## Unified JSON Format (v4.0)
 
 The `index.json` file contains all indexer output in a single file:
 
@@ -75,18 +79,18 @@ The `index.json` file contains all indexer output in a single file:
 ### Call Kinds
 
 **Stable** (always generated):
-- `access` - Property access (`$obj->property`)
-- `method` - Method call (`$obj->method()`)
-- `constructor` - Object instantiation (`new Foo()`)
-- `access_static` - Static property (`Foo::$prop`)
-- `method_static` - Static method (`Foo::method()`)
+- `access` -- Property access (`$obj->property`)
+- `method` -- Method call (`$obj->method()`)
+- `constructor` -- Object instantiation (`new Foo()`)
+- `access_static` -- Static property (`Foo::$prop`)
+- `method_static` -- Static method (`Foo::method()`)
 
 **Experimental** (require `--experimental`):
-- `function` - Function call (`sprintf()`)
-- `access_array` - Array access (`$arr['key']`)
-- `coalesce` - Null coalesce (`$a ?? $b`)
-- `ternary` / `ternary_full` - Ternary operators
-- `match` - Match expressions
+- `function` -- Function call (`sprintf()`)
+- `access_array` -- Array access (`$arr['key']`)
+- `coalesce` -- Null coalesce (`$a ?? $b`)
+- `ternary` / `ternary_full` -- Ternary operators
+- `match` -- Match expressions
 
 ## Configuration
 
@@ -99,27 +103,33 @@ Optional `scip-php.json` to treat external packages as internal (full indexing):
 }
 ```
 
-## Fork Improvements
-> **Note**: This is a fork of [davidrjenni/scip-php](https://github.com/davidrjenni/scip-php) with significant extensions for call tracking and data flow analysis. While it still produces standard SCIP indexes compatible with Sourcegraph, the primary focus is on generating unified JSON output for the [kloc](https://github.com/kloc-dev/kloc) code analysis toolkit.
+## Extensions Beyond Original scip-php
 
-Beyond the original scip-php:
-
-- **Calls tracking** - Full call site and data flow analysis
-- **Value tracking** - Parameters, locals, results with type info
-- **Chain reconstruction** - Follow `receiver_value_id` through call chains
-- **Argument binding** - Track which values are passed to which parameters
-- **Unified JSON output** - Single file containing SCIP index + calls + values
-- Standalone CLI with Docker support
+- **Call site tracking** -- Full call site and data flow analysis
+- **Value tracking** -- Parameters, locals, results with type info
+- **Chain reconstruction** -- Follow `receiver_value_id` through call chains
+- **Argument binding** -- Track which values are passed to which parameters
+- **Unified JSON output** -- Single file containing SCIP index + calls + values
 - Method override relationships (bidirectional)
 - Extends vs implements distinction
-- Type definition relationships
+- Standalone CLI with Docker support
 
-## Related Projects
+## Development
 
-- [kloc](https://github.com/kloc-dev/kloc) - Code analysis toolkit using this indexer
-- [SCIP](https://github.com/sourcegraph/scip) - Source Code Intelligence Protocol
-- [Original scip-php](https://github.com/davidrjenni/scip-php) - Upstream project
+All development uses Docker:
+
+```bash
+# Build dev image
+docker build -t scip-php-dev -f Dockerfile.dev .
+
+# Run tests
+docker run --rm -v $(pwd):/app scip-php-dev vendor/bin/phpunit --no-coverage
+
+# Run linting
+docker run --rm -v $(pwd):/app scip-php-dev vendor/bin/phpcs
+docker run --rm -v $(pwd):/app scip-php-dev vendor/bin/phpstan --memory-limit=2G
+```
 
 ## License
 
-MIT - see [LICENSE](LICENSE)
+MIT
