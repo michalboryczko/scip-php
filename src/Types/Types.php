@@ -475,7 +475,11 @@ final class Types
     public function collect(string ...$filenames): void
     {
         foreach ($filenames as $f) {
-            $this->parser->traverse($f, $this, $this->collectDefs(...));
+            try {
+                $this->parser->traverse($f, $this, $this->collectDefs(...));
+            } catch (\Throwable $e) {
+                fwrite(STDERR, "Warning: skipping type collection for {$f}: {$e->getMessage()}\n");
+            }
         }
     }
 
