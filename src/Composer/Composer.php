@@ -15,6 +15,7 @@ use RuntimeException;
 use ScipPhp\File\Reader;
 
 use function array_filter;
+use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_pop;
@@ -91,6 +92,15 @@ final class Composer
 
     /** @var ?non-empty-string Path to the scip-php.json config file */
     private readonly ?string $configPath;
+
+    /** @var array<string, ?string> Memoization cache for findFile() results */
+    private array $fileCache = [];
+
+    /** @var array<string, ?array{name: non-empty-string, version: non-empty-string}> Memoization cache for pkg() results */
+    private array $pkgCache = [];
+
+    /** @var array<string, bool> Memoization cache for isFromProject() results */
+    private array $projectIdents = [];
 
     /**
      * @param  non-empty-string  $elem
@@ -233,19 +243,21 @@ final class Composer
                 throw new RuntimeException("Invalid install path of package {$name}: {$info['install_path']}.");
             }
             if ($name !== $this->pkgName) {
-                $normalizedPath = self::normalizePath($path);
+                $normalizedPath = rtrim(self::normalizePath($path), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
                 $pkgsByPaths[$normalizedPath] = ['name' => $name, 'version' => $info['reference']];
-                if ($normalizedPath !== $path) {
-                    $pkgsByPaths[$path] = ['name' => $name, 'version' => $info['reference']];
+                $rawNormalized = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                if ($rawNormalized !== $normalizedPath) {
+                    $pkgsByPaths[$rawNormalized] = ['name' => $name, 'version' => $info['reference']];
                 }
             }
         }
 
         $composerPath = self::join($this->vendorDir, 'composer');
-        $normalizedComposerPath = self::normalizePath($composerPath);
+        $normalizedComposerPath = rtrim(self::normalizePath($composerPath), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $pkgsByPaths[$normalizedComposerPath] = ['name' => 'composer', 'version' => 'dev'];
-        if ($normalizedComposerPath !== $composerPath) {
-            $pkgsByPaths[$composerPath] = ['name' => 'composer', 'version' => 'dev'];
+        $rawComposerPath = rtrim($composerPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if ($rawComposerPath !== $normalizedComposerPath) {
+            $pkgsByPaths[$rawComposerPath] = ['name' => 'composer', 'version' => 'dev'];
         }
         $this->pkgsByPaths = $pkgsByPaths;
 
@@ -582,6 +594,19 @@ final class Composer
      */
     public function findFile(string $ident): ?string
     {
+        if (array_key_exists($ident, $this->fileCache)) {
+            return $this->fileCache[$ident];
+        }
+
+        return $this->fileCache[$ident] = $this->resolveFile($ident);
+    }
+
+    /**
+     * @param  non-empty-string  $ident
+     * @return ?non-empty-string
+     */
+    private function resolveFile(string $ident): ?string
+    {
         // PHP built-ins are in the phpstorm-stubs files
         $stub = $this->stub($ident);
         if ($stub !== null) {
@@ -658,20 +683,23 @@ final class Composer
      */
     public function pkg(string $ident): ?array
     {
+        if (array_key_exists($ident, $this->pkgCache)) {
+            return $this->pkgCache[$ident];
+        }
+
         if ($this->isStub($ident)) {
-            return ['name' => 'php', 'version' => PHP_VERSION];
+            return $this->pkgCache[$ident] = ['name' => 'php', 'version' => PHP_VERSION];
         }
         if ($this->isFromProject($ident)) {
-            return ['name' => $this->pkgName, 'version' => $this->pkgVersion];
+            return $this->pkgCache[$ident] = ['name' => $this->pkgName, 'version' => $this->pkgVersion];
         }
         $f = $this->findFile($ident);
         if ($f === null) {
-            return null;
+            return $this->pkgCache[$ident] = null;
         }
         foreach ($this->pkgsByPaths as $path => $info) {
-            $pathNormalized = rtrim($path, DIRECTORY_SEPARATOR);
-            if (str_starts_with($f, $pathNormalized . DIRECTORY_SEPARATOR)) {
-                return $info;
+            if (str_starts_with($f, $path)) {
+                return $this->pkgCache[$ident] = $info;
             }
         }
         throw new RuntimeException("Cannot find package for identifier {$ident} in file {$f}.");
@@ -680,22 +708,26 @@ final class Composer
     /** @param  non-empty-string  $ident */
     private function isFromProject(string $ident): bool
     {
+        if (array_key_exists($ident, $this->projectIdents)) {
+            return $this->projectIdents[$ident];
+        }
+
         if (str_contains($ident, 'anon-class-') || str_contains($ident, 'anon-func-')) {
-            return true;
+            return $this->projectIdents[$ident] = true;
         }
         if ($this->isStub($ident)) {
-            return false;
+            return $this->projectIdents[$ident] = false;
         }
         $f = $this->findFile($ident);
         if ($f === null) {
-            return false;
+            return $this->projectIdents[$ident] = false;
         }
         foreach (array_keys($this->pkgsByPaths) as $path) {
             if (str_starts_with($f, $path)) {
-                return false;
+                return $this->projectIdents[$ident] = false;
             }
         }
-        return !str_starts_with($f, $this->vendorDir);
+        return $this->projectIdents[$ident] = !str_starts_with($f, $this->vendorDir);
     }
 
     /** @param  non-empty-string  $ident */

@@ -18,7 +18,7 @@ use ScipPhp\Composer\Composer;
 use ScipPhp\Parser\Parser;
 use ScipPhp\Types\Types;
 
-use function array_merge;
+use function array_push;
 use function array_values;
 use function str_replace;
 
@@ -72,7 +72,7 @@ final class Indexer
         $this->parser = new Parser();
         $this->composer = new Composer($this->projectRoot, $composerJsonPath, $configPath, $internalAll);
         $this->namer = new SymbolNamer($this->composer);
-        $this->types = new Types($this->composer, $this->namer);
+        $this->types = new Types($this->composer, $this->namer, $this->parser);
     }
 
     public function index(): Index
@@ -89,7 +89,13 @@ final class Indexer
             $relativePath = str_replace($this->projectRoot . '/', '', $filename);
             try {
                 $docIndexer = new DocIndexer($this->composer, $this->namer, $this->types, $relativePath, $this->experimental);
-                $this->parser->traverse($filename, $docIndexer, $docIndexer->index(...));
+                $this->parser->traverse(
+                    $filename,
+                    $docIndexer,
+                    $docIndexer->index(...),
+                    $docIndexer->enterScope(...),
+                    $docIndexer->leaveScope(...),
+                );
             } catch (\Throwable $e) {
                 fwrite(STDERR, "Warning: skipping {$relativePath}: {$e->getMessage()}\n");
                 continue;
@@ -110,15 +116,22 @@ final class Indexer
                 $syntheticTypes[$symbol] = $info;
             }
             if ($ctx->values !== []) {
-                $allValues = array_merge($allValues, $ctx->values);
+                array_push($allValues, ...$ctx->values);
             }
             if ($ctx->calls !== []) {
-                $allCalls = array_merge($allCalls, $ctx->calls);
+                array_push($allCalls, ...$ctx->calls);
             }
         }
 
         $this->values = $allValues;
         $this->calls = $allCalls;
+
+        // Clear scope stack from shared namer/types after indexing
+        $this->namer->setScopeStack(null);
+        $this->types->setActiveScopeStack(null);
+
+        // Free cached ASTs — all files have been processed
+        $this->parser->clearCache();
 
         // Merge synthetic types into external symbols (they're global, not file-specific)
         foreach ($syntheticTypes as $symbol => $info) {

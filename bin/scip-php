@@ -63,7 +63,7 @@ HELP;
 }
 
 // Memory limit
-$memoryLimit = $options['memory-limit'] ?? '-1';
+$memoryLimit = $options['memory-limit'] ?? '1G';
 if (!\is_string($memoryLimit)) {
     echo "Invalid memory limit.\n";
     exit(1);

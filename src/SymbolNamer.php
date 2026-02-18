@@ -23,6 +23,7 @@ use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Trait_;
 use RuntimeException;
 use ScipPhp\Composer\Composer;
+use ScipPhp\Indexing\ScopeStack;
 
 use function count;
 use function explode;
@@ -37,7 +38,7 @@ use function strrpos;
 use function strtolower;
 use function substr;
 
-final readonly class SymbolNamer
+final class SymbolNamer
 {
     private const string SCHEME = 'scip-php';
 
@@ -93,8 +94,20 @@ final readonly class SymbolNamer
         'resource' => 'resource',
     ];
 
-    public function __construct(private Composer $composer)
+    private ?ScopeStack $scopeStack = null;
+
+    public function __construct(private readonly Composer $composer)
     {
+    }
+
+    /**
+     * Set the scope stack for O(1) scope lookups during traversal.
+     * When set, namespaceName/classLike/funcLikeName use stack reads
+     * instead of walking the AST parent chain.
+     */
+    public function setScopeStack(?ScopeStack $scopeStack): void
+    {
+        $this->scopeStack = $scopeStack;
     }
 
     /**
@@ -465,6 +478,9 @@ final readonly class SymbolNamer
 
     private function namespaceName(Node $n): string
     {
+        if ($this->scopeStack !== null) {
+            return $this->scopeStack->getNamespace();
+        }
         while (true) {
             $n = $n->getAttribute('parent');
             if ($n === null) {
@@ -496,6 +512,9 @@ final readonly class SymbolNamer
 
     private function classLike(Node $n): ?ClassLike
     {
+        if ($this->scopeStack !== null) {
+            return $this->scopeStack->getClassNode();
+        }
         while (true) {
             $n = $n->getAttribute('parent');
             if ($n === null) {
@@ -510,6 +529,9 @@ final readonly class SymbolNamer
     /** @return ?non-empty-string */
     public function funcLikeName(Node $n): ?string
     {
+        if ($this->scopeStack !== null) {
+            return $this->scopeStack->getFuncLikeScope();
+        }
         while (true) {
             $n = $n->getAttribute('parent');
             if ($n === null) {

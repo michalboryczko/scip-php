@@ -6,9 +6,11 @@ namespace ScipPhp;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
@@ -40,6 +42,8 @@ use ScipPhp\Indexing\IndexingContext;
 use ScipPhp\Indexing\LocalVariableTracker;
 use ScipPhp\Indexing\ScipDefinitionEmitter;
 use ScipPhp\Indexing\ScipReferenceEmitter;
+use ScipPhp\Indexing\ScopeFrame;
+use ScipPhp\Indexing\ScopeStack;
 use ScipPhp\Indexing\TypeResolver;
 use ScipPhp\Parser\DocCommentParser;
 use ScipPhp\Parser\PosResolver;
@@ -47,6 +51,7 @@ use ScipPhp\Types\Types;
 
 use function is_string;
 use function ltrim;
+use function str_replace;
 
 final class DocIndexer
 {
@@ -66,6 +71,8 @@ final class DocIndexer
 
     private readonly DocCommentParser $docCommentParser;
 
+    private readonly ScopeStack $scopeStack;
+
     public function __construct(
         Composer $composer,
         private readonly SymbolNamer $namer,
@@ -74,7 +81,11 @@ final class DocIndexer
         bool $experimental = false,
     ) {
         $this->ctx = new IndexingContext($relativePath, $experimental);
+        $this->scopeStack = new ScopeStack();
         $this->typeResolver = new TypeResolver($namer, $types);
+        $this->typeResolver->setScopeStack($this->scopeStack);
+        $namer->setScopeStack($this->scopeStack);
+        $types->setActiveScopeStack($this->scopeStack);
         $this->callBuilder = new CallRecordBuilder($this->ctx, $this->typeResolver, $namer, $types);
         $this->exprTracker = new ExpressionTracker(
             $this->ctx,
@@ -103,6 +114,79 @@ final class DocIndexer
     public function getContext(): IndexingContext
     {
         return $this->ctx;
+    }
+
+    /**
+     * Push a scope frame when entering a scope-defining node.
+     * Called via Parser enterNode callback.
+     *
+     * namer->name() is safe to call here because the required parent frames
+     * (namespace, class) are already on the stack by the time we enter a
+     * method/function/closure. Traversal order is depth-first: Namespace_ is
+     * entered before ClassLike, which is entered before ClassMethod, etc.
+     */
+    public function enterScope(Node $n): void
+    {
+        if ($n instanceof Namespace_) {
+            $ns = str_replace('\\', '/', $n->name?->toString() ?? '');
+            if ($ns !== '') {
+                $ns .= '/';
+            }
+            $this->scopeStack->push(new ScopeFrame($ns, null, null, null, 'namespace'));
+            return;
+        }
+
+        if ($n instanceof ClassLike) {
+            $className = $n->name?->toString();
+            if ($className === null || $className === '') {
+                $className = "anon-class-{$n->getStartTokenPos()}";
+            }
+            $this->scopeStack->push(new ScopeFrame('', $className, $n, null, 'class'));
+            return;
+        }
+
+        if ($n instanceof ClassMethod) {
+            // Compute the method's SCIP symbol for enclosing scope lookups
+            $methodSymbol = $this->namer->name($n);
+            $this->scopeStack->push(new ScopeFrame('', null, null, $methodSymbol, 'method'));
+            return;
+        }
+
+        if ($n instanceof Function_) {
+            $funcSymbol = $this->namer->name($n);
+            $this->scopeStack->push(new ScopeFrame('', null, null, $funcSymbol, 'function'));
+            return;
+        }
+
+        if ($n instanceof Closure) {
+            $closureSymbol = $this->namer->name($n);
+            $this->scopeStack->push(new ScopeFrame('', null, null, $closureSymbol, 'closure'));
+            return;
+        }
+
+        if ($n instanceof ArrowFunction) {
+            $arrowSymbol = $this->namer->name($n);
+            $this->scopeStack->push(new ScopeFrame('', null, null, $arrowSymbol, 'arrow'));
+            return;
+        }
+    }
+
+    /**
+     * Pop a scope frame when leaving a scope-defining node.
+     * Called via Parser leaveNode callback (after the main visitor).
+     */
+    public function leaveScope(Node $n): void
+    {
+        if (
+            $n instanceof Namespace_
+            || $n instanceof ClassLike
+            || $n instanceof ClassMethod
+            || $n instanceof Function_
+            || $n instanceof Closure
+            || $n instanceof ArrowFunction
+        ) {
+            $this->scopeStack->pop();
+        }
     }
 
     public function index(PosResolver $pos, Node $n): void
