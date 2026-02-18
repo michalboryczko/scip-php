@@ -223,7 +223,13 @@ final class DocIndexerTest extends TestCase
     {
         $filename = self::TESTDATA_DIR . DIRECTORY_SEPARATOR . $relativePath;
         $indexer = new DocIndexer($this->composer, $this->namer, $this->types);
-        $this->parser->traverse($filename, $indexer, $indexer->index(...));
+        $this->parser->traverse(
+            $filename,
+            $indexer,
+            $indexer->index(...),
+            $indexer->enterScope(...),
+            $indexer->leaveScope(...),
+        );
         return $indexer->getContext()->occurrences;
     }
 

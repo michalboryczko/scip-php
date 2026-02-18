@@ -38,6 +38,7 @@ use PhpParser\Node\Stmt\EnumCase;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Property;
 use ScipPhp\Composer\Composer;
+use ScipPhp\Indexing\ScopeStack;
 use ScipPhp\Parser\DocCommentParser;
 use ScipPhp\Parser\Parser;
 use ScipPhp\Parser\PosResolver;
@@ -82,16 +83,28 @@ final class Types
     /** Current scope (method/function symbol) for local variable tracking */
     private ?string $currentScope = null;
 
+    /** Active scope stack to restore after dependency loading */
+    private ?ScopeStack $activeScopeStack = null;
+
     public function __construct(
         private readonly Composer $composer,
         private readonly SymbolNamer $namer,
+        ?Parser $parser = null,
     ) {
-        $this->parser = new Parser();
+        $this->parser = $parser ?? new Parser();
         $this->typeParser = new TypeParser($namer);
         $this->docCommentParser = new DocCommentParser();
         $this->uppers = [];
         $this->defs = [];
         $this->seenDepFiles = [];
+    }
+
+    /**
+     * Set the active scope stack to restore after dependency loading.
+     */
+    public function setActiveScopeStack(?ScopeStack $scopeStack): void
+    {
+        $this->activeScopeStack = $scopeStack;
     }
 
     /** @return ?non-empty-string */
@@ -448,7 +461,11 @@ final class Types
             if (isset($this->seenDepFiles[$f])) {
                 continue;
             }
+            // Temporarily suspend scope stack during dependency loading
+            // to prevent stale scope context from the current file
+            $this->namer->setScopeStack(null);
             $this->parser->traverse($f, $this, $this->collectDefs(...));
+            $this->namer->setScopeStack($this->activeScopeStack);
             $this->seenDepFiles[$f] = true;
 
             // After loading, first check if the symbol is now directly available

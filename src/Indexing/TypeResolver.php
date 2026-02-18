@@ -35,10 +35,17 @@ use function str_starts_with;
 
 final class TypeResolver
 {
+    private ?ScopeStack $scopeStack = null;
+
     public function __construct(
         private readonly SymbolNamer $namer,
         private readonly Types $types,
     ) {
+    }
+
+    public function setScopeStack(?ScopeStack $scopeStack): void
+    {
+        $this->scopeStack = $scopeStack;
     }
 
     /**
@@ -354,6 +361,10 @@ final class TypeResolver
      */
     public function findEnclosingScope(Node $n): ?string
     {
+        if ($this->scopeStack !== null) {
+            return $this->scopeStack->getEnclosingScope();
+        }
+
         $parent = $n->getAttribute('parent');
 
         while ($parent !== null) {
