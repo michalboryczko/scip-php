@@ -17,6 +17,7 @@ use ScipPhp\Types\Types;
 
 use function array_filter;
 use function array_values;
+use function count;
 use function str_contains;
 
 use const DIRECTORY_SEPARATOR;
@@ -72,23 +73,23 @@ final class DocIndexerTest extends TestCase
         $itemsRefs = $this->findOccurrences(
             $occurrences,
             'ParameterRefs#process().($items)',
-            SymbolRole::UnspecifiedSymbolRole
+            SymbolRole::UnspecifiedSymbolRole,
         );
         $countRefs = $this->findOccurrences(
             $occurrences,
             'ParameterRefs#process().($count)',
-            SymbolRole::UnspecifiedSymbolRole
+            SymbolRole::UnspecifiedSymbolRole,
         );
 
         self::assertGreaterThanOrEqual(
             1,
             count($itemsRefs),
-            'Parameter $items should have at least 1 reference in method body'
+            'Parameter $items should have at least 1 reference in method body',
         );
         self::assertGreaterThanOrEqual(
             1,
             count($countRefs),
-            'Parameter $count should have at least 1 reference in method body'
+            'Parameter $count should have at least 1 reference in method body',
         );
     }
 
@@ -122,12 +123,12 @@ final class DocIndexerTest extends TestCase
         $serviceRefs = $this->findOccurrences(
             $occurrences,
             'local 0',
-            SymbolRole::UnspecifiedSymbolRole
+            SymbolRole::UnspecifiedSymbolRole,
         );
         self::assertGreaterThanOrEqual(
             2,
             count($serviceRefs),
-            'Variable $service should be referenced at least twice (use clause + closure body)'
+            'Variable $service should be referenced at least twice (use clause + closure body)',
         );
     }
 
@@ -143,12 +144,12 @@ final class DocIndexerTest extends TestCase
         $itemsRefs = $this->findOccurrences(
             $occurrences,
             'ForeachRefs#iterate().($items)',
-            SymbolRole::UnspecifiedSymbolRole
+            SymbolRole::UnspecifiedSymbolRole,
         );
         self::assertGreaterThanOrEqual(
             1,
             count($itemsRefs),
-            'Parameter $items should be referenced in foreach'
+            'Parameter $items should be referenced in foreach',
         );
 
         // Find local variable definitions for $key and $value
@@ -165,12 +166,12 @@ final class DocIndexerTest extends TestCase
         self::assertGreaterThanOrEqual(
             1,
             count($keyRefs),
-            'Foreach $key variable should be referenced in loop body'
+            'Foreach $key variable should be referenced in loop body',
         );
         self::assertGreaterThanOrEqual(
             1,
             count($valueRefs),
-            'Foreach $value variable should be referenced in loop body'
+            'Foreach $value variable should be referenced in loop body',
         );
     }
 
@@ -188,7 +189,11 @@ final class DocIndexerTest extends TestCase
         $itemRefs = $this->findOccurrences($occurrences, 'local 1', SymbolRole::UnspecifiedSymbolRole);
 
         self::assertGreaterThanOrEqual(1, count($itemDefs), 'Foreach $item variable should be defined');
-        self::assertGreaterThanOrEqual(1, count($itemRefs), 'Foreach $item variable should be referenced in loop body');
+        self::assertGreaterThanOrEqual(
+            1,
+            count($itemRefs),
+            'Foreach $item variable should be referenced in loop body',
+        );
     }
 
     /**
@@ -219,7 +224,7 @@ final class DocIndexerTest extends TestCase
         $filename = self::TESTDATA_DIR . DIRECTORY_SEPARATOR . $relativePath;
         $indexer = new DocIndexer($this->composer, $this->namer, $this->types);
         $this->parser->traverse($filename, $indexer, $indexer->index(...));
-        return $indexer->occurrences;
+        return $indexer->getContext()->occurrences;
     }
 
     /**
@@ -248,7 +253,7 @@ final class DocIndexerTest extends TestCase
         return array_values(array_filter(
             $occurrences,
             static fn(Occurrence $occ): bool =>
-                str_contains($occ->getSymbol(), $symbolPattern) && $occ->getSymbolRoles() === $role
+                str_contains($occ->getSymbol(), $symbolPattern) && $occ->getSymbolRoles() === $role,
         ));
     }
 }

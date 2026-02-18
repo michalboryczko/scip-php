@@ -88,14 +88,42 @@ final readonly class TypeParser
             return new NamedType($name);
         }
         if ($n instanceof NullableType) {
-            return $this->parse($n->type);
+            // ?Foo is equivalent to Foo|null - create a union type
+            $innerType = $this->parse($n->type);
+            if ($innerType === null && $n->type instanceof Identifier) {
+                // Inner type is a builtin like 'string' - create named type from builtin symbol
+                $builtinName = $this->namer->nameBuiltin($n->type->name);
+                if ($builtinName !== null) {
+                    $innerType = new NamedType($builtinName);
+                }
+            }
+            if ($innerType === null) {
+                return null;
+            }
+            $nullType = new NamedType($this->namer->nameBuiltin('null') ?? 'null');
+            return CompositeType::union($innerType, $nullType);
         }
-        if ($n instanceof UnionType || $n instanceof IntersectionType) {
+        if ($n instanceof UnionType) {
             $types = [];
             foreach ($n->types as $t) {
                 $types[] = $this->parse($t);
             }
-            return new CompositeType(...$types);
+            return CompositeType::union(...$types);
+        }
+        if ($n instanceof IntersectionType) {
+            $types = [];
+            foreach ($n->types as $t) {
+                $types[] = $this->parse($t);
+            }
+            return CompositeType::intersection(...$types);
+        }
+        // Identifier (built-in types like int, string, bool)
+        // Return NamedType with builtin symbol for type resolution in calls.json
+        if ($n instanceof Identifier) {
+            $builtinName = $this->namer->nameBuiltin($n->name);
+            if ($builtinName !== null) {
+                return new NamedType($builtinName);
+            }
         }
         return null;
     }
@@ -132,10 +160,17 @@ final readonly class TypeParser
         if ($type instanceof ConditionalTypeNode || $type instanceof ConditionalTypeForParameterNode) {
             $ifType = $this->parseDoc($node, $type->if);
             $elseType = $this->parseDoc($node, $type->else);
-            return new CompositeType($ifType, $elseType);
+            return CompositeType::union($ifType, $elseType);
         }
 
         if ($type instanceof IdentifierTypeNode) {
+            // Check if it's a built-in type first
+            $builtinSymbol = $this->namer->nameBuiltin($type->name);
+            if ($builtinSymbol !== null) {
+                return new NamedType($builtinSymbol);
+            }
+
+            // Skip PHPStan-specific extended types that don't map to class symbols
             if (in_array($type->name, self::BUILTIN_TYPES, true)) {
                 return null;
             }
@@ -164,16 +199,31 @@ final readonly class TypeParser
             return new NamedType($n);
         }
 
-        if ($type instanceof IntersectionTypeNode || $type instanceof UnionTypeNode) {
+        if ($type instanceof UnionTypeNode) {
             $types = [];
             foreach ($type->types as $t) {
                 $types[] = $this->parseDoc($node, $t);
             }
-            return new CompositeType(...$types);
+            return CompositeType::union(...$types);
+        }
+
+        if ($type instanceof IntersectionTypeNode) {
+            $types = [];
+            foreach ($type->types as $t) {
+                $types[] = $this->parseDoc($node, $t);
+            }
+            return CompositeType::intersection(...$types);
         }
 
         if ($type instanceof NullableTypeNode) {
-            return $this->parseDoc($node, $type->type);
+            // ?Foo is equivalent to Foo|null
+            $innerType = $this->parseDoc($node, $type->type);
+            $nullSymbol = $this->namer->nameBuiltin('null');
+            if ($nullSymbol !== null) {
+                $nullType = new NamedType($nullSymbol);
+                return CompositeType::union($innerType, $nullType);
+            }
+            return $innerType;
         }
 
         if ($type instanceof ThisTypeNode) {

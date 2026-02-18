@@ -15,6 +15,8 @@ $longOpts = [
     'config:',
     'output:',
     'memory-limit:',
+    'experimental',
+    'internal-all',
 ];
 
 $options = \getopt($shortOpts, $longOpts);
@@ -35,18 +37,22 @@ Options:
   -d, --project-dir=PATH       Project directory to index (default: current directory)
   -c, --composer=PATH          Path to composer.json (default: <project-dir>/composer.json)
       --config=PATH            Path to scip-php.json config (default: <project-dir>/scip-php.json)
-  -o, --output=PATH            Output file path (default: index.scip)
+  -o, --output=PATH            Output file path (default: index.json)
       --memory-limit=SIZE      Memory limit (default: 1G)
+      --experimental           Include experimental call kinds (function, access_array, coalesce, ternary, match)
+      --internal-all           Treat all vendor packages as internal (full indexing)
 
 Examples:
   {$script}                                      Index current directory
   {$script} -d /path/to/project                  Index specific project
-  {$script} -d /path/to/project -o output.scip   Index and save to custom output file
+  {$script} -d /path/to/project -o output.json   Index and save to custom output file
   {$script} --composer=/custom/composer.json     Use custom composer.json location
   {$script} --config=/custom/scip-php.json       Use custom config file
+  {$script} --internal-all                       Index all vendor packages as internal
 
 Configuration file (scip-php.json):
   {
+    "internal_all": true,
     "internal_packages": ["symfony/console"],
     "internal_classes": ["Symfony\\Component\\Console\\Command\\Command"],
     "internal_methods": ["Symfony\\Component\\Console\\Command\\Command::execute"]
@@ -122,8 +128,14 @@ if ($configPath !== null) {
     $configPath = $resolved;
 }
 
+// Experimental flag (boolean, presence = true)
+$experimental = isset($options['experimental']);
+
+// Internal-all flag (treat all vendor packages as internal)
+$internalAll = isset($options['internal-all']);
+
 // Output file path
-$outputPath = $options['o'] ?? $options['output'] ?? 'index.scip';
+$outputPath = $options['o'] ?? $options['output'] ?? 'index.json';
 if (!\is_string($outputPath) || $outputPath === '') {
     echo "Invalid output path.\n";
     exit(1);
@@ -153,10 +165,16 @@ if ($composerPath !== null) {
 if ($configPath !== null) {
     echo "Using config: {$configPath}\n";
 }
+if ($experimental) {
+    echo "Experimental call kinds: enabled\n";
+}
+if ($internalAll) {
+    echo "Internal all: treating all vendor packages as internal\n";
+}
 
-$indexer = new Indexer($projectDir, $version, $args, $composerPath, $configPath);
+$indexer = new Indexer($projectDir, $version, $args, $composerPath, $configPath, $experimental, $internalAll);
 $index = $indexer->index();
 
-\file_put_contents($outputPath, $index->serializeToString());
+$indexer->writeUnifiedJson($outputPath, $index);
 
-echo "Index written to: {$outputPath}\n";
+echo "Unified JSON written to: {$outputPath}\n";

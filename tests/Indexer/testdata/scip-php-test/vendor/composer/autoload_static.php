@@ -9,10 +9,11 @@ class ComposerStaticInit1c1309d7d1898d3f8b5e7cf0cd8c605a
     public static $files = array (
         '461d3d65d0236afc37b13ac2ea55e5a8' => __DIR__ . '/../..' . '/src/func2.php',
         'e411a9cf9cf9783d596e3be43fc9cd50' => __DIR__ . '/../..' . '/src/func3.php',
+        '785194ad1ed9f93978d7e695c1ddf2d8' => __DIR__ . '/../..' . '/src/callsHelper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'T' => 
+        'T' =>
         array (
             'Test\\Dep\\' => 9,
             'TestData\\' => 9,
@@ -22,19 +23,19 @@ class ComposerStaticInit1c1309d7d1898d3f8b5e7cf0cd8c605a
     );
 
     public static $prefixDirsPsr4 = array (
-        'Test\\Dep\\' => 
+        'Test\\Dep\\' =>
         array (
             0 => __DIR__ . '/..' . '/davidrjenni/scip-php-test-dep/src',
         ),
-        'TestData\\' => 
+        'TestData\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
-        'TestData3\\' => 
+        'TestData3\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
-        'TestData2\\' => 
+        'TestData2\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
@@ -42,6 +43,32 @@ class ComposerStaticInit1c1309d7d1898d3f8b5e7cf0cd8c605a
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'TestData\\Address' => __DIR__ . '/../..' . '/src/Address.php',
+        'TestData\\CallsFuncCaller' => __DIR__ . '/../..' . '/src/CallsFuncCaller.php',
+        'TestData\\CallsRepository' => __DIR__ . '/../..' . '/src/CallsRepository.php',
+        'TestData\\CallsService' => __DIR__ . '/../..' . '/src/CallsService.php',
+        'TestData\\ClassA' => __DIR__ . '/../..' . '/src/ClassA.php',
+        'TestData\\ClassB' => __DIR__ . '/../..' . '/src/ClassB.php',
+        'TestData\\ClassC' => __DIR__ . '/../..' . '/src/ClassC.php',
+        'TestData\\ClassD' => __DIR__ . '/../..' . '/src/ClassD.php',
+        'TestData\\ClassF' => __DIR__ . '/../..' . '/src/ClassF.php',
+        'TestData\\ClassH' => __DIR__ . '/../..' . '/src/ClassH.php',
+        'TestData\\ClosureCapture' => __DIR__ . '/../..' . '/src/ClosureCapture.php',
+        'TestData\\Coordinates' => __DIR__ . '/../..' . '/src/Coordinates.php',
+        'TestData\\EnumG' => __DIR__ . '/../..' . '/src/EnumG.php',
+        'TestData\\ExpressionChainsService' => __DIR__ . '/../..' . '/src/ExpressionChainsService.php',
+        'TestData\\ForeachRefs' => __DIR__ . '/../..' . '/src/ForeachRefs.php',
+        'TestData\\IntersectionTypesFixture' => __DIR__ . '/../..' . '/src/IntersectionTypesFixture.php',
+        'TestData\\Message' => __DIR__ . '/../..' . '/src/Message.php',
+        'TestData\\OverrideBase' => __DIR__ . '/../..' . '/src/OverrideBase.php',
+        'TestData\\OverrideChild' => __DIR__ . '/../..' . '/src/OverrideChild.php',
+        'TestData\\OverrideMiddle' => __DIR__ . '/../..' . '/src/OverrideMiddle.php',
+        'TestData\\ParameterRefs' => __DIR__ . '/../..' . '/src/ParameterRefs.php',
+        'TestData\\RelationshipTestClass' => __DIR__ . '/../..' . '/src/RelationshipTestClass.php',
+        'TestData\\RelationshipTestInterface' => __DIR__ . '/../..' . '/src/RelationshipTestInterface.php',
+        'TestData\\TraitE' => __DIR__ . '/../..' . '/src/TraitE.php',
+        'TestData\\UnionTypesFixture' => __DIR__ . '/../..' . '/src/UnionTypesFixture.php',
+        'Test\\Dep\\ClassI' => __DIR__ . '/..' . '/davidrjenni/scip-php-test-dep/src/ClassI.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

@@ -21,6 +21,12 @@ final readonly class MixedIterableType implements IterableType
     }
 
     #[Override]
+    public function isComposite(): bool
+    {
+        return false;
+    }
+
+    #[Override]
     public function valueType(int|string|null $key): ?Type
     {
         return $this->types[$key] ?? null;

@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     '461d3d65d0236afc37b13ac2ea55e5a8' => $baseDir . '/src/func2.php',
     'e411a9cf9cf9783d596e3be43fc9cd50' => $baseDir . '/src/func3.php',
+    '785194ad1ed9f93978d7e695c1ddf2d8' => $baseDir . '/src/callsHelper.php',
 );

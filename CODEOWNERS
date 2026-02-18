@@ -1,1 +1,19 @@
 * @davidrjenni
+```
+(kloc-cli) ➜  kloc-cli git:(main) ✗  kloc-cli context "App\\Repository\\OrderRepository" --sot ../artifacts/a.json --depth 3 --impl
+Context for App\Repository\OrderRepository
+defined at: src/Repository/OrderRepository.php:10
+
+== USED BY ==
+App\Repository\OrderRepository
+├── [1] src/Service/OrderService.php [type_hint] (src/Service/OrderService.php:12)
+│   ├── [2] App\Ui\Rest\Controller\OrderController::__construct(private readonly \App\Service\OrderService $orderService) -> OrderService [type_hint] (src/Ui/Rest/Controller/OrderController.php:21)
+│   ├── [2] src/Ui/Rest/Controller/OrderController.php -> OrderService [type_hint] (src/Ui/Rest/Controller/OrderController.php:8)
+│   ├── [2] App\Ui\Rest\Controller\OrderController::create(#[\Symfony\Component\HttpKernel\Attribute\MapRequestPayload] -> createOrder() [method_call] (src/Ui/Rest/Controller/OrderController.php:57)
+│   │           on: $this->orderService
+│   └── [2] App\Ui\Rest\Controller\OrderController::get(int $id): \Symfony\Component\HttpFoundation\JsonResponse -> getOrder() [method_call] (src/Ui/Rest/Controller/OrderController.php:28)
+│               on: $this->orderService
+```
+
+because we have that type_hint which we mark as source of use of OrderRepository we have list of Controllers and some shity redundant data which iss only noice.
+Pay extra attention to that correct typing

@@ -1,0 +1,2156 @@
+{
+    "version": "2.0",
+    "project_root": "/app/tests/Indexer/testdata/scip-php-test",
+    "calls": [
+        {
+            "id": "src/func2.php:9:11",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 fun2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/func2.php",
+                "line": 9,
+                "col": 11
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/func3.php:12:11",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData4/fun2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/func3.php",
+                "line": 12,
+                "col": 11
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsFuncCaller.php:12:48",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsFuncCaller#callFunction().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsFuncCaller.php",
+                "line": 12,
+                "col": 48
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsFuncCaller.php:12:18",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsFuncCaller#callFunction().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/callsHelperFunction().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsFuncCaller.php",
+                "line": 12,
+                "col": 18
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/callsHelperFunction().($input)",
+                    "value_type": null,
+                    "value_call_id": "src/CallsFuncCaller.php:12:48",
+                    "value_expr": "'test'"
+                }
+            ]
+        },
+        {
+            "id": "src/CallsFuncCaller.php:15:22",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsFuncCaller#callFunction().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsFuncCaller.php",
+                "line": 15,
+                "col": 22
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsFuncCaller.php:15:15",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsFuncCaller#callFunction().",
+            "callee": "scip-php composer php 8.4.15 strlen().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsFuncCaller.php",
+                "line": 15,
+                "col": 15
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": null,
+                    "value_type": null,
+                    "value_call_id": "src/CallsFuncCaller.php:15:22",
+                    "value_expr": "'hello'"
+                }
+            ]
+        },
+        {
+            "id": "src/CallsRepository.php:21:15",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#create().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsRepository.php",
+                "line": 21,
+                "col": 15
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:19:8",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#$repo.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 19,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:19:26",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().($order)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 19,
+                "col": 26
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:19:34",
+            "kind": "constant",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 19,
+                "col": 34
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:19:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().",
+            "return_type": null,
+            "receiver_id": "src/CallsService.php:19:8",
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 19,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().($entity)",
+                    "value_type": null,
+                    "value_call_id": "src/CallsService.php:19:26",
+                    "value_expr": "$order"
+                },
+                {
+                    "position": 1,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().($flush)",
+                    "value_type": null,
+                    "value_call_id": "src/CallsService.php:19:34",
+                    "value_expr": "true"
+                }
+            ]
+        },
+        {
+            "id": "src/CallsService.php:22:17",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#$repo.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 22,
+                "col": 17
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:22:17",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#findAll().",
+            "return_type": null,
+            "receiver_id": "src/CallsService.php:22:17",
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 22,
+                "col": 17
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:25:43",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 25,
+                "col": 43
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:25:19",
+            "kind": "method_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#create().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 25,
+                "col": 19
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#create().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/CallsService.php:25:43",
+                    "value_expr": "'test'"
+                }
+            ]
+        },
+        {
+            "id": "src/CallsService.php:28:23",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 28,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:34:8",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#chainedCalls().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#$repo.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 34,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:34:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#chainedCalls().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#findAll().",
+            "return_type": null,
+            "receiver_id": "src/CallsService.php:34:8",
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 34,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:35:26",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#chainedCalls().",
+            "callee": "scip-php composer php 8.4.15 stdClass#__construct().",
+            "return_type": "scip-php composer php 8.4.15 stdClass#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 35,
+                "col": 26
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:35:8",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#chainedCalls().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#$repo.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 35,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:35:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#chainedCalls().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().",
+            "return_type": null,
+            "receiver_id": "src/CallsService.php:35:8",
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 35,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().($entity)",
+                    "value_type": "scip-php composer php 8.4.15 stdClass#",
+                    "value_call_id": "src/CallsService.php:35:26",
+                    "value_expr": "new \\stdClass()"
+                }
+            ]
+        },
+        {
+            "id": "src/CallsService.php:41:47",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#namedArgs().",
+            "callee": "scip-php composer php 8.4.15 stdClass#__construct().",
+            "return_type": "scip-php composer php 8.4.15 stdClass#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 41,
+                "col": 47
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:41:8",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#namedArgs().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#$repo.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 41,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:41:33",
+            "kind": "constant",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#namedArgs().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 41,
+                "col": 33
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:41:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#namedArgs().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().",
+            "return_type": null,
+            "receiver_id": "src/CallsService.php:41:8",
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 41,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 1,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().($flush)",
+                    "value_type": null,
+                    "value_call_id": "src/CallsService.php:41:33",
+                    "value_expr": "true"
+                },
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#save().($entity)",
+                    "value_type": "scip-php composer php 8.4.15 stdClass#",
+                    "value_call_id": "src/CallsService.php:41:47",
+                    "value_expr": "new \\stdClass()"
+                }
+            ]
+        },
+        {
+            "id": "src/CallsService.php:47:8",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#nullsafeCall().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#$repo.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 47,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/CallsService.php:47:8",
+            "kind": "method_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsService#nullsafeCall().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CallsRepository#findAll().",
+            "return_type": null,
+            "receiver_id": "src/CallsService.php:47:8",
+            "location": {
+                "file": "src/CallsService.php",
+                "line": 47,
+                "col": 8
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:23:14",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 23,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:24:28",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 24,
+                "col": 28
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:24:28",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b1.",
+            "return_type": "scip-php synthetic union . ClassC|null#",
+            "receiver_id": "src/ClassA.php:24:28",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 24,
+                "col": 28
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:24:28",
+            "kind": "property_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/TraitE#$e2.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test-dep 3e11662443768bf3887b227b8510bc789ed151c6 Test/Dep/ClassI#",
+            "receiver_id": "src/ClassA.php:24:28",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 24,
+                "col": 28
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:24:51",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "local 3",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 24,
+                "col": 51
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:24:28",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test-dep 3e11662443768bf3887b227b8510bc789ed151c6 Test/Dep/ClassI#i1().",
+            "return_type": null,
+            "receiver_id": "src/ClassA.php:24:28",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 24,
+                "col": 28
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test-dep 3e11662443768bf3887b227b8510bc789ed151c6 Test/Dep/ClassI#i1().($value)",
+                    "value_type": null,
+                    "value_call_id": "src/ClassA.php:24:51",
+                    "value_expr": "$v1"
+                }
+            ]
+        },
+        {
+            "id": "src/ClassA.php:25:19",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 25,
+                "col": 19
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:25:19",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#b1().",
+            "return_type": null,
+            "receiver_id": "src/ClassA.php:25:19",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 25,
+                "col": 19
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:27:14",
+            "kind": "method_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#c1().",
+            "return_type": "scip-php synthetic union . ClassB|ClassD#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 27,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:27:14",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassD#$d1.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#",
+            "receiver_id": "src/ClassA.php:27:14",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 27,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:27:14",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f1().",
+            "return_type": null,
+            "receiver_id": "src/ClassA.php:27:14",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 27,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:34:14",
+            "kind": "method_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a3().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#c1().",
+            "return_type": "scip-php synthetic union . ClassB|ClassD#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 34,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:40:14",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 40,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:30",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 30
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:30",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b1.",
+            "return_type": "scip-php synthetic union . ClassC|null#",
+            "receiver_id": "src/ClassA.php:42:30",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 30
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:46",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#$a1.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 46
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:46",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassB#$b1.",
+            "return_type": "scip-php synthetic union . ClassC|null#",
+            "receiver_id": "src/ClassA.php:42:46",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 46
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:46",
+            "kind": "property_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#$c2.",
+            "return_type": "scip-php synthetic union . ClassB|ClassD#",
+            "receiver_id": "src/ClassA.php:42:46",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 46
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:46",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassD#$d1.",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#",
+            "receiver_id": "src/ClassA.php:42:46",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 46
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:42:15",
+            "kind": "ternary_full",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php operator . ternary#",
+            "return_type": "scip-php synthetic union . ClassC|ClassF|null#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 15
+            },
+            "arguments": [],
+            "true_id": "src/ClassA.php:42:30",
+            "false_id": "src/ClassA.php:42:46"
+        },
+        {
+            "id": "src/ClassA.php:42:14",
+            "kind": "method_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassC#c1().",
+            "return_type": "scip-php synthetic union . ClassB|ClassD#",
+            "receiver_id": "src/ClassA.php:42:15",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 42,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:43:14",
+            "kind": "method_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f2().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 43,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:43:14",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().",
+            "return_type": null,
+            "receiver_id": "src/ClassA.php:43:14",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 43,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:44:15",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 44,
+                "col": 15
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:44:14",
+            "kind": "method_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f2().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 44,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassA.php:44:14",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a4().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a1().",
+            "return_type": null,
+            "receiver_id": "src/ClassA.php:44:14",
+            "location": {
+                "file": "src/ClassA.php",
+                "line": 44,
+                "col": 14
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassF.php:20:39",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f1().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassF.php",
+                "line": 20,
+                "col": 39
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassF.php:20:32",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f1().",
+            "callee": "scip-php composer php 8.4.15 strlen().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassF.php",
+                "line": 20,
+                "col": 32
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": null,
+                    "value_type": null,
+                    "value_call_id": "src/ClassF.php:20:39",
+                    "value_expr": "'ABC'"
+                }
+            ]
+        },
+        {
+            "id": "src/ClassH.php:14:12",
+            "kind": "method_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#__construct().",
+            "callee": "scip-php composer php 8.4.15 Exception#__construct().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 14,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassH.php:19:17",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData4/fun2().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 19,
+                "col": 17
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassH.php:19:17",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassF#f2().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#",
+            "receiver_id": "src/ClassH.php:19:17",
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 19,
+                "col": 17
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassH.php:19:17",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "return_type": null,
+            "receiver_id": "src/ClassH.php:19:17",
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 19,
+                "col": 17
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassH.php:20:19",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().",
+            "callee": "scip-php composer php 8.4.15 Exception#getCode().",
+            "return_type": "scip-php synthetic union . int|mixed#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 20,
+                "col": 19
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassH.php:20:38",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 fun2().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 20,
+                "col": 38
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClassH.php:20:38",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassH#h1().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClassA#a2().",
+            "return_type": null,
+            "receiver_id": "src/ClassH.php:20:38",
+            "location": {
+                "file": "src/ClassH.php",
+                "line": 20,
+                "col": 38
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClosureCapture.php:11:19",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClosureCapture#run().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClosureCapture.php",
+                "line": 11,
+                "col": 19
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClosureCapture.php:13:19",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClosureCapture#run().",
+            "callee": "local 0",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClosureCapture.php",
+                "line": 13,
+                "col": 19
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClosureCapture.php:13:37",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClosureCapture#run().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClosureCapture.php",
+                "line": 13,
+                "col": 37
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClosureCapture.php:13:41",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClosureCapture#run().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ClosureCapture.php",
+                "line": 13,
+                "col": 41
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ClosureCapture.php:13:19",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ClosureCapture#run().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().",
+            "return_type": null,
+            "receiver_id": "src/ClosureCapture.php:13:19",
+            "location": {
+                "file": "src/ClosureCapture.php",
+                "line": 13,
+                "col": 19
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().($items)",
+                    "value_type": null,
+                    "value_call_id": "src/ClosureCapture.php:13:37",
+                    "value_expr": "[]"
+                },
+                {
+                    "position": 1,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().($count)",
+                    "value_type": null,
+                    "value_call_id": "src/ClosureCapture.php:13:41",
+                    "value_expr": "0"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:21:23",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#variableAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#variableAsArgument().($name)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 21,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:21:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#variableAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 21,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:21:23",
+                    "value_expr": "$name"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:33:23",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().($msg)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 33,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:33:23",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:33:23",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 33,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:33:23",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:33:23",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 33,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:33:48",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 33,
+                "col": 48
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:33:23",
+            "kind": "coalesce",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().",
+            "callee": "scip-php operator . coalesce#",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 33,
+                "col": 23
+            },
+            "arguments": [],
+            "left_id": "src/ExpressionChainsService.php:33:23",
+            "right_id": "src/ExpressionChainsService.php:33:48"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:33:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#propertyChainAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 33,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:33:23",
+                    "value_expr": "$msg->address->street ?? 'unknown'"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:43:12",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().($msg)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 43,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:43:12",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:43:12",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 43,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:43:12",
+            "kind": "property_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:43:12",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 43,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:43:12",
+            "kind": "property_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:43:12",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 43,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:43:54",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 43,
+                "col": 54
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:43:12",
+            "kind": "coalesce",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "scip-php operator . coalesce#",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 43,
+                "col": 12
+            },
+            "arguments": [],
+            "left_id": "src/ExpressionChainsService.php:43:12",
+            "right_id": "src/ExpressionChainsService.php:43:54"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:44:12",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().($msg)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 44,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:44:12",
+            "kind": "property",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:44:12",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 44,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:44:12",
+            "kind": "property_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:44:12",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 44,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:44:12",
+            "kind": "property_nullsafe",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:44:12",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 44,
+                "col": 12
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:44:55",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 44,
+                "col": 55
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:44:12",
+            "kind": "coalesce",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "scip-php operator . coalesce#",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 44,
+                "col": 12
+            },
+            "arguments": [],
+            "left_id": "src/ExpressionChainsService.php:44:12",
+            "right_id": "src/ExpressionChainsService.php:44:55"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:42:15",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nullsafeChainWithCoalesce().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 42,
+                "col": 15
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#__construct().($latitude)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:43:12",
+                    "value_expr": "$msg->address?->coordinates?->latitude ?? 0.0"
+                },
+                {
+                    "position": 1,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#__construct().($longitude)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:44:12",
+                    "value_expr": "$msg->address?->coordinates?->longitude ?? 0.0"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:54:23",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().($flag)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 54,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:54:31",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().($a)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 54,
+                "col": 31
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:54:36",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().($b)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 54,
+                "col": 36
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:54:23",
+            "kind": "ternary_full",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().",
+            "callee": "scip-php operator . ternary#",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 54,
+                "col": 23
+            },
+            "arguments": [],
+            "condition_id": "src/ExpressionChainsService.php:54:23",
+            "true_id": "src/ExpressionChainsService.php:54:31",
+            "false_id": "src/ExpressionChainsService.php:54:36"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:54:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#ternaryAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 54,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:54:23",
+                    "value_expr": "$flag ? $a : $b"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:63:23",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#elvisAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#elvisAsArgument().($name)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 63,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:63:32",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#elvisAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 63,
+                "col": 32
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:63:23",
+            "kind": "ternary",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#elvisAsArgument().",
+            "callee": "scip-php operator . elvis#",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 63,
+                "col": 23
+            },
+            "arguments": [],
+            "left_id": "src/ExpressionChainsService.php:63:23",
+            "right_id": "src/ExpressionChainsService.php:63:32"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:63:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#elvisAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 63,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:63:23",
+                    "value_expr": "$name ?: 'default'"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:77:23",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#matchAsArgument().",
+            "callee": "local 0",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 77,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:77:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#matchAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 77,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:77:23",
+                    "value_expr": "$label"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:89:32",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nestedConstructors().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 89,
+                "col": 32
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:89:16",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nestedConstructors().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 89,
+                "col": 16
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#__construct().($latitude)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:89:32",
+                    "value_expr": "51.5074"
+                },
+                {
+                    "position": 1,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#__construct().($longitude)",
+                    "value_type": null,
+                    "value_call_id": null,
+                    "value_expr": "-0.1278"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:88:16",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nestedConstructors().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 88,
+                "col": 16
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:87:12",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nestedConstructors().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Address#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Address#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 87,
+                "col": 12
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Address#__construct().($street)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:88:16",
+                    "value_expr": "'Main Street'"
+                },
+                {
+                    "position": 1,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Address#__construct().($coordinates)",
+                    "value_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Coordinates#",
+                    "value_call_id": "src/ExpressionChainsService.php:89:16",
+                    "value_expr": "new \\TestData\\Coordinates(51.5074, -0.1278)"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:86:15",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#nestedConstructors().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Message#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Message#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 86,
+                "col": 15
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Message#__construct().($address)",
+                    "value_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Address#",
+                    "value_call_id": "src/ExpressionChainsService.php:87:12",
+                    "value_expr": "new \\TestData\\Address('Main Street', new \\TestData\\Coordinates(51.5074, -0.1278))"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:100:23",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().($data)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 100,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:100:29",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 100,
+                "col": 29
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:100:23",
+            "kind": "array_access",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": "src/ExpressionChainsService.php:100:23",
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 100,
+                "col": 23
+            },
+            "arguments": [],
+            "key_id": "src/ExpressionChainsService.php:100:29"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:100:40",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 100,
+                "col": 40
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:100:23",
+            "kind": "coalesce",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().",
+            "callee": "scip-php operator . coalesce#",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 100,
+                "col": 23
+            },
+            "arguments": [],
+            "left_id": "src/ExpressionChainsService.php:100:23",
+            "right_id": "src/ExpressionChainsService.php:100:40"
+        },
+        {
+            "id": "src/ExpressionChainsService.php:100:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#arrayAccessAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 100,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:100:23",
+                    "value_expr": "$data['name'] ?? 'unknown'"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:108:28",
+            "kind": "constant_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#constantAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#DEFAULT_PRECISION.",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 108,
+                "col": 28
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:108:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#constantAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logPrecision().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 108,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logPrecision().($precision)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:108:28",
+                    "value_expr": "self::DEFAULT_PRECISION"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:116:23",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#literalsAsArguments().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 116,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:116:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#literalsAsArguments().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 116,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logName().($name)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:116:23",
+                    "value_expr": "'literal string'"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:117:28",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#literalsAsArguments().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 117,
+                "col": 28
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:117:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#literalsAsArguments().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logPrecision().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 117,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logPrecision().($precision)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:117:28",
+                    "value_expr": "42"
+                }
+            ]
+        },
+        {
+            "id": "src/ExpressionChainsService.php:118:23",
+            "kind": "constant",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#literalsAsArguments().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 118,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ExpressionChainsService.php:118:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#literalsAsArguments().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logFlag().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ExpressionChainsService.php",
+                "line": 118,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ExpressionChainsService#logFlag().($flag)",
+                    "value_type": null,
+                    "value_call_id": "src/ExpressionChainsService.php:118:23",
+                    "value_expr": "true"
+                }
+            ]
+        },
+        {
+            "id": "src/IntersectionTypesFixture.php:36:15",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#returnIntersection().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CountableStringable#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/CountableStringable#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/IntersectionTypesFixture.php",
+                "line": 36,
+                "col": 15
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/IntersectionTypesFixture.php:73:29",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#passIntersectionAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#passIntersectionAsArgument().($obj)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/IntersectionTypesFixture.php",
+                "line": 73,
+                "col": 29
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/IntersectionTypesFixture.php:73:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#passIntersectionAsArgument().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#processTagged().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/IntersectionTypesFixture.php",
+                "line": 73,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/IntersectionTypesFixture#processTagged().($tagged)",
+                    "value_type": null,
+                    "value_call_id": "src/IntersectionTypesFixture.php:73:29",
+                    "value_expr": "$obj"
+                }
+            ]
+        },
+        {
+            "id": "src/OverrideChild.php:11:15",
+            "kind": "method_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/OverrideChild#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/OverrideMiddle#process().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/OverrideChild.php",
+                "line": 11,
+                "col": 15
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/OverrideMiddle.php:11:15",
+            "kind": "method_static",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/OverrideMiddle#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/OverrideBase#process().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/OverrideMiddle.php",
+                "line": 11,
+                "col": 15
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ParameterRefs.php:15:27",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().",
+            "callee": "local 0",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ParameterRefs.php",
+                "line": 15,
+                "col": 27
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ParameterRefs.php:15:36",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ParameterRefs.php",
+                "line": 15,
+                "col": 36
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ParameterRefs.php:15:39",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().($count)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ParameterRefs.php",
+                "line": 15,
+                "col": 39
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/ParameterRefs.php:15:15",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/ParameterRefs#process().",
+            "callee": "scip-php composer php 8.4.15 array_slice().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/ParameterRefs.php",
+                "line": 15,
+                "col": 15
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": null,
+                    "value_type": null,
+                    "value_call_id": "src/ParameterRefs.php:15:27",
+                    "value_expr": "$result"
+                },
+                {
+                    "position": 1,
+                    "parameter": null,
+                    "value_type": null,
+                    "value_call_id": "src/ParameterRefs.php:15:36",
+                    "value_expr": "0"
+                },
+                {
+                    "position": 2,
+                    "parameter": null,
+                    "value_type": null,
+                    "value_call_id": "src/ParameterRefs.php:15:39",
+                    "value_expr": "$count"
+                }
+            ]
+        },
+        {
+            "id": "src/TraitE.php:30:30",
+            "kind": "literal",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/TraitE#e3().",
+            "callee": "",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/TraitE.php",
+                "line": 30,
+                "col": 30
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/TraitE.php:30:24",
+            "kind": "function",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/TraitE#e3().",
+            "callee": "scip-php composer php 8.4.15 count().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/TraitE.php",
+                "line": 30,
+                "col": 24
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": null,
+                    "value_type": null,
+                    "value_call_id": "src/TraitE.php:30:30",
+                    "value_expr": "[0]"
+                }
+            ]
+        },
+        {
+            "id": "src/UnionTypesFixture.php:107:21",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#matchWithUnionResult().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Logger#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Logger#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/UnionTypesFixture.php",
+                "line": 107,
+                "col": 21
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/UnionTypesFixture.php:108:23",
+            "kind": "constructor",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#matchWithUnionResult().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Auditor#__construct().",
+            "return_type": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/Auditor#",
+            "receiver_id": null,
+            "location": {
+                "file": "src/UnionTypesFixture.php",
+                "line": 108,
+                "col": 23
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/UnionTypesFixture.php:119:30",
+            "kind": "variable",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#nestedCallWithUnion().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#nestedCallWithUnion().($handler)",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/UnionTypesFixture.php",
+                "line": 119,
+                "col": 30
+            },
+            "arguments": []
+        },
+        {
+            "id": "src/UnionTypesFixture.php:119:8",
+            "kind": "method",
+            "caller": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#nestedCallWithUnion().",
+            "callee": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#processHandler().",
+            "return_type": null,
+            "receiver_id": null,
+            "location": {
+                "file": "src/UnionTypesFixture.php",
+                "line": 119,
+                "col": 8
+            },
+            "arguments": [
+                {
+                    "position": 0,
+                    "parameter": "scip-php composer davidrjenni/scip-php-test 2879a47ba00225b1d0cf31ebe8b9fc7f6cd28be5 TestData/UnionTypesFixture#processHandler().($handler)",
+                    "value_type": null,
+                    "value_call_id": "src/UnionTypesFixture.php:119:30",
+                    "value_expr": "$handler"
+                }
+            ]
+        }
+    ]
+}

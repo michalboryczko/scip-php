@@ -6,7 +6,8 @@
     "autoload": {
         "files": [
             "src/func2.php",
-            "src/func3.php"
+            "src/func3.php",
+            "src/callsHelper.php"
         ],
         "psr-4": {
             "TestData\\": "src",
